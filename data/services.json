@@ -1,8 +1,0 @@
-{
-    "services": {
-        "name": "Service 1",
-        "description": "Description of Service 1",
-        "price": 99.99,
-        "duration": 60
-    }
-}
