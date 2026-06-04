@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Dream Pizzas{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header>
-        <h1>Shop Name</h1>
-        <nav>
+        <nav class="main-links">
             <ul>
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 <li><a href="{{ url_for('about') }}">About</a></li>
@@ -22,8 +21,8 @@
     </main>
 
     <footer>
-        <p>&copy; 2026  Shop Name. All rights reserved.</p>
-        <nav>
+        <p>&copy; 2026  Dream Pizzas. All rights reserved.</p>
+        <nav class="secondary-links">
             <ul>
                 <li><a href="{{ url_for('order_history') }}">Order History</a></li>
                 <li><a href="{{ url_for('contact') }}">Contact</a></li>
