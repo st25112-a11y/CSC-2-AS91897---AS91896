@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!--Template design for all pages on website-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,9 +10,15 @@
     <header>
         <nav class="main-links">
             <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('about') }}">About</a></li>
-                <li><a href="{{ url_for('menu') }}">Menu</a></li>
+                <li><a href="{{ url_for('index') }}"
+                    class="{{ 'active' if active_page == 'index' else '' }}">
+                    Home</a></li>
+                <li><a href="{{ url_for('about') }}"
+                    class="{{ 'active' if active_page == 'about' else '' }}">
+                    About</a></li>
+                <li><a href="{{ url_for('menu') }}"
+                    class="{{ 'active' if active_page == 'menu' else '' }}">
+                    Menu</a></li>
             </ul>
         </nav>
     </header>

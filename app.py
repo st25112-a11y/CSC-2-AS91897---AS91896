@@ -9,11 +9,15 @@ app.secret_key = 'key'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', active_page='index')
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    return render_template('about.html', active_page='about')
+
+@app.route('/menu')
+def menu():
+    return render_template('menu.html', active_page='menu')
 
 @app.route('/contact')
 def contact():
@@ -22,10 +26,6 @@ def contact():
 @app.route('/order_history')
 def order_history():
     return render_template('order_history.html')
-
-@app.route('/menu')
-def menu():
-    return render_template('menu.html')
 
 @app.route('/help')
 def help():
