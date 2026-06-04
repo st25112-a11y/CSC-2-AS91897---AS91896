@@ -23,9 +23,9 @@ def contact():
 def order_history():
     return render_template('order_history.html')
 
-@app.route('/ordering_menu')
-def ordering_menu():
-    return render_template('ordering_menu.html')
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
 
 @app.route('/help')
 def help():
