@@ -7,6 +7,19 @@ from flask import Flask, render_template, request, session, flash, redirect, url
 app = Flask(__name__)
 app.secret_key = 'key'
 
+def load_data():
+    try:
+        with open('data/classic_pizzas.json') as f:
+            classic_pizzas = json.load(f)
+        with open('data/gourmet_pizzas.json') as f:
+            gourmet_pizzas = json.load(f)
+        with open('data/sides.json') as f:
+            sides = json.load(f)
+        return classic_pizzas, gourmet_pizzas, sides
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Error loading data: {e}")
+        return {}, {}, {}
+
 @app.route('/')
 def index():
     return render_template('index.html', active_page='index')
@@ -17,7 +30,32 @@ def about():
 
 @app.route('/menu')
 def menu():
-    return render_template('menu.html', active_page='menu')
+    cart = session.get('cart', [])
+    classic_pizzas, gourmet_pizzas, sides = load_data()
+    menu_items = []
+
+    for name, details in classic_pizzas.items():
+        menu_items.append({
+            "name": name,
+            "price": details["price"],
+            "stock": details["stock"]
+        })
+
+    for name, details in gourmet_pizzas.items():
+        menu_items.append({
+            "name": name,
+            "price": details["price"],
+            "stock": details["stock"]
+        })
+
+    for name, details in sides.items():
+        menu_items.append({
+            "name": name,
+            "price": details["price"],
+            "stock": details["stock"]
+        })
+
+    return render_template('menu.html', active_page='menu', menu_items=menu_items)
 
 @app.route('/contact')
 def contact():
@@ -30,18 +68,6 @@ def order_history():
 @app.route('/help')
 def help():
     return render_template('help.html')
-
-def load_data():
-    try:
-        with open('data/services.json') as f:
-            data = json.load(f)
-        with open('data/services.json') as f:
-            services = json.load(f)
-        return data, services
-    except(FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error loading data: {e}")
-        return {}, {}
-
 
 if __name__ == '__main__':
     app.run(debug=True)

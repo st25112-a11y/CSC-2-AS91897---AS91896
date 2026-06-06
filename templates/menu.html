@@ -3,8 +3,16 @@
 {% block title %}Ordering Menu - Dream Pizzas{% endblock %}
 
 {% block content %}
-    <body>
-        <h2>shop name</h2>
-        <p>placeholder</p>
-    </body>
+    <table>
+        {% for item in menu_items %}
+        <tr>
+            <td>
+                <h2>{{ item.name }}</h2>
+                <p>Price: ${{ item.price }}</p>
+                <p>Stock: {{ item.stock }}</p>
+                <button onclick="openModal('{{ item.name }}')">Order</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
