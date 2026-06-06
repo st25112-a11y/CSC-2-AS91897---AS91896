@@ -1,8 +1,26 @@
 {
-    "product1": {
-        "name": "Product 1",
-        "description": "Description of Product 1",
+    "Peperoni Pizza": {
         "price": 19.99,
         "stock": 50
+    },
+    "Cheese Pizza": {
+        "price": 15.99,
+        "stock": 60
+    },
+    "Veggie Pizza": {
+        "price": 16.99,
+        "stock": 40
+    },
+    "Cheesey Garlic Pizza": {
+        "price": 16.99,
+        "stock": 55
+    },
+    "Beef & Onion Pizza": {
+        "price": 18.99,
+        "stock": 35
+    },
+    "Hawaiian Pizza": {
+        "price": 18.99,
+        "stock": 25
     }
 }
