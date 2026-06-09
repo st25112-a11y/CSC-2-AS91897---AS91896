@@ -3,7 +3,6 @@
 {% block title %}Ordering Menu - Dream Pizzas{% endblock %}
 
 {% block content %}
-    <script src="modal.js"></script>
     <table>
         {% for item in menu_items %}
         <tr>
@@ -11,9 +10,19 @@
                 <h2>{{ item.name }}</h2>
                 <p>Price: ${{ item.price }}</p>
                 <p>Stock: {{ item.stock }}</p>
-                <button onclick="openModal('{{ item.name }}')">Order</button>
+                <button class="order-btn" data-name="{{ item.name }}">Order</button>
             </td>
         </tr>
         {% endfor %}
     </table>
+    <dialog id="myModal">
+        <h2 id="modalTitle"></h2>
+        <form method="dialog">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1" value="1">
+            <button type="submit">Confirm</button>
+            <button type="button" onclick="closeModal()">Cancel</button>
+        </form>
+    </dialog>
+    <script src="{{ url_for('static', filename='modal.js') }}"></script>
 {% endblock %}
