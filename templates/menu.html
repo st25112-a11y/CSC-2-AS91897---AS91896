@@ -3,14 +3,42 @@
 {% block title %}Ordering Menu - Dream Pizzas{% endblock %}
 
 {% block content %}
+    <h1>Our Menu</h1>
+    <h2>Classic Pizzas</h2>
     <table>
-        {% for item in menu_items %}
+        {% for name, details in classic_pizzas.items() %}
         <tr>
             <td>
-                <h2>{{ item.name }}</h2>
-                <p>Price: ${{ item.price }}</p>
-                <p>Stock: {{ item.stock }}</p>
-                <button class="order-btn" data-name="{{ item.name }}">Order</button>
+                <h2>{{ name }}</h2>
+                <p>Price: ${{ details.price }}</p>
+                <p>Stock: {{ details.stock }}</p>
+                <button class="order-btn" data-name="{{ name }}">Order</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Gourmet Pizzas</h2>
+    <table>
+        {% for name, details in gourmet_pizzas.items() %}
+        <tr>
+            <td>
+                <h2>{{ name }}</h2>
+                <p>Price: ${{ details.price }}</p>
+                <p>Stock: {{ details.stock }}</p>
+                <button class="order-btn" data-name="{{ name }}">Order</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Sides</h2>
+    <table>
+        {% for name, details in sides.items() %}
+        <tr>
+            <td>
+                <h2>{{ name }}</h2>
+                <p>Price: ${{ details.price }}</p>
+                <p>Stock: {{ details.stock }}</p>
+                <button class="order-btn" data-name="{{ name }}">Order</button>
             </td>
         </tr>
         {% endfor %}
@@ -18,8 +46,14 @@
     <dialog id="myModal">
         <h2 id="modalTitle"></h2>
         <form method="dialog">
+            <label for="size">Size:</label>
+            <select id="size" name="size">
+                <option value="1"> Small</option>
+                <option value="2"> Medium</option>
+                <option value="3"> Large</option>
+            </select>
             <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" min="1" value="1">
+            <input type="number" name="quantity" min="1" value="1">
             <button type="submit">Confirm</button>
             <button type="button" onclick="closeModal()">Cancel</button>
         </form>
