@@ -32,30 +32,8 @@ def about():
 def menu():
     cart = session.get('cart', [])
     classic_pizzas, gourmet_pizzas, sides = load_data()
-    menu_items = []
 
-    for name, details in classic_pizzas.items():
-        menu_items.append({
-            "name": name,
-            "price": details["price"],
-            "stock": details["stock"]
-        })
-
-    for name, details in gourmet_pizzas.items():
-        menu_items.append({
-            "name": name,
-            "price": details["price"],
-            "stock": details["stock"]
-        })
-
-    for name, details in sides.items():
-        menu_items.append({
-            "name": name,
-            "price": details["price"],
-            "stock": details["stock"]
-        })
-
-    return render_template('menu.html', active_page='menu', menu_items=menu_items)
+    return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides)
 
 @app.route('/contact')
 def contact():
