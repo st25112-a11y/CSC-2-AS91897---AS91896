@@ -45,7 +45,8 @@
     </table>
     <dialog id="myModal">
         <h2 id="modalTitle"></h2>
-        <form method="dialog">
+        <form method="POST" action="{{ url_for('cart') }}">
+            <input type="hidden" id="modalItemName" name="item" required>
             <label for="size">Size:</label>
             <select id="size" name="size" required>
                 <option value="1"> Small</option>

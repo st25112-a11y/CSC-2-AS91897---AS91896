@@ -1,20 +1,21 @@
 const modal = document.getElementById('myModal');
 const modalTitle = document.getElementById('modalTitle');
+const modalItemName = document.getElementById('modalItemName');
 
-function openModal(itemName) {
-    modalTitle.textContent = itemName;
-    modal.showModal();
-}
+document.querySelectorAll('.order-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const itemName = button.getAttribute('data-name');
+        
+        modalTitle.textContent = `Order ${itemName}`;
+        modalItemName.value = itemName;
+        
+        modal.showModal();
+    });
+});
 
 function closeModal() {
     modal.close();
 }
-
-document.querySelectorAll('.order-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        openModal(button.dataset.name);
-    });
-});
 
 const deliverySelect = document.getElementById("del_or_pickup");
 const addressContainer = document.getElementById("addressField");

@@ -47,5 +47,40 @@ def order_history():
 def help():
     return render_template('help.html')
 
+@app.route('/cart', methods=['GET', 'POST'])
+def cart():
+    if request.method == 'POST':
+        item = request.form.get('item')
+        size = request.form.get('size')
+        quantity = int(request.form.get('quantity'))
+        del_or_pickup = request.form.get('del_or_pickup')
+        address = request.form.get('address')
+        customer_name = request.form.get('customer_name')
+        contact = request.form.get('contact')
+        instructions = request.form.get('instructions')
+
+        if item:
+            cart_item = {
+                'item': item,
+                'size': size,
+                'quantity': quantity,
+                'del_or_pickup': del_or_pickup,
+                'address': address,
+                'customer_name': customer_name,
+                'contact': contact,
+                'instructions': instructions
+            }
+            cart = session.get('cart', [])
+            cart.append(cart_item)
+            session['cart'] = cart
+            flash(f'Added {quantity}x {size} {item} to your cart')
+        return redirect(url_for('menu'))
+    
+def checkout():
+    cart = session.get('cart', [])
+    if not cart:
+        flash('Your cart is empty. Please add items to your cart before checking out.')
+        return redirect(url_for('menu'))
+
 if __name__ == '__main__':
     app.run(debug=True)
