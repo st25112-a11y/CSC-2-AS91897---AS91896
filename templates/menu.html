@@ -4,74 +4,73 @@
 
 {% block content %}
     <h1>Our Menu</h1>
-    <h2>Classic Pizzas</h2>
-    <table>
-        {% for name, details in classic_pizzas.items() %}
-        <tr>
-            <td>
-                <h2>{{ name }}</h2>
-                <p>Price: ${{ details.price }}</p>
-                <p>Stock: {{ details.stock }}</p>
-                <button class="order-btn" data-name="{{ name }}">Order</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    <h2>Gourmet Pizzas</h2>
-    <table>
-        {% for name, details in gourmet_pizzas.items() %}
-        <tr>
-            <td>
-                <h2>{{ name }}</h2>
-                <p>Price: ${{ details.price }}</p>
-                <p>Stock: {{ details.stock }}</p>
-                <button class="order-btn" data-name="{{ name }}">Order</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    <h2>Sides</h2>
-    <table>
-        {% for name, details in sides.items() %}
-        <tr>
-            <td>
-                <h2>{{ name }}</h2>
-                <p>Price: ${{ details.price }}</p>
-                <p>Stock: {{ details.stock }}</p>
-                <button class="order-btn" data-name="{{ name }}">Order</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="left">
+        <h2>Classic Pizzas</h2>
+        <table>
+            {% for name, details in classic_pizzas.items() %}
+            <tr>
+                <td>
+                    <h2>{{ name }}</h2>
+                    <p>Price: ${{ details.price }}</p>
+                    <p>Stock: {{ details.stock }}</p>
+                    <button class="order-btn" data-name="{{ name }}">Order</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h2>Gourmet Pizzas</h2>
+        <table>
+            {% for name, details in gourmet_pizzas.items() %}
+            <tr>
+                <td>
+                    <h2>{{ name }}</h2>
+                    <p>Price: ${{ details.price }}</p>
+                    <p>Stock: {{ details.stock }}</p>
+                    <button class="order-btn" data-name="{{ name }}">Order</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h2>Sides</h2>
+        <table>
+            {% for name, details in sides.items() %}
+            <tr>
+                <td>
+                    <h2>{{ name }}</h2>
+                    <p>Price: ${{ details.price }}</p>
+                    <p>Stock: {{ details.stock }}</p>
+                    <button class="order-btn" data-name="{{ name }}">Order</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="right">
+        <h2>Your Order</h2>
+        <ul id="cartItems">
+        </ul>
+        <p>Total: $<span id="cartTotal">test</span></p>
+        <button onclick="window.location.href='{{ url_for("checkout") }}'">Checkout</button>
+    </div>
     <dialog id="myModal">
         <h2 id="modalTitle"></h2>
         <form method="POST" action="{{ url_for('cart') }}">
             <input type="hidden" id="modalItemName" name="item" required>
             <label for="size">Size:</label>
+
             <select id="size" name="size" required>
                 <option value="1"> Small</option>
                 <option value="2"> Medium</option>
                 <option value="3"> Large</option>
             </select><br>
+
             <label for="quantity">Quantity:</label>
             <input type="number" name="quantity" min="1" value="1" required><br>
-            <label for="del_or_pickup">Delivery or Pickup:</label>
-            <select id="del_or_pickup" name="del_or_pickup" required>
-                <option value="delivery"> Delivery</option>
-                <option value="pickup"> Pickup</option>
-            </select><br>
-            <div id="addressField">
-                <label for="address">Address:</label>
-                <input type="text" name="address" required><br>
-            </div>
-            <label for="contact">Contact Number:</label>
-            <input type="number" name="contact" max="99" min="01" required>
-            <input type="number" name="contact" max="99999999" min="10000000" required><br>
-            <label for="name">Name:</label>
-            <input type="text" name="name" required><br>
+
             <label for="instructions">Special Instructions:</label>
             <textarea name="instructions"></textarea><br>
-            <button type="submit">Confirm</button>
+
+            <button type="submit">Add to Cart</button>
             <button type="button" onclick="closeModal()">Cancel</button>
         </form>
     </dialog>
