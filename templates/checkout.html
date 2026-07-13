@@ -1,0 +1,33 @@
+{% extends "template.html" %}
+{% block title %}Checkout - Dream Pizzas{% endblock %}
+
+{% block content %}
+    <h1>Checkout</h1>
+    
+    <ul>
+        {% for item in cart %}
+            <li>{{ item.quantity }}x {{ item.size }} {{ item.item }}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="POST" action="{{ url_for('checkout') }}">
+        <label for="del_or_pickup">Delivery or Pickup:</label>
+        <select id="del_or_pickup" name="del_or_pickup" required>
+            <option value="delivery">Delivery</option>
+            <option value="pickup">Pickup</option>
+        </select><br>
+
+        <div id="addressField">
+            <label for="address">Address:</label>
+            <input type="text" name="address"><br>
+        </div>
+
+        <label for="contact">Contact Number:</label>
+        <input type="number" name="contact" required><br>
+
+        <label for="name">Name:</label>
+        <input type="text" name="name" required><br>
+
+        <button type="submit">Place Order</button>
+    </form>
+{% endblock %}

@@ -49,14 +49,11 @@ def help():
 
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
+
     if request.method == 'POST':
         item = request.form.get('item')
         size = request.form.get('size')
-        quantity = int(request.form.get('quantity'))
-        del_or_pickup = request.form.get('del_or_pickup')
-        address = request.form.get('address')
-        customer_name = request.form.get('customer_name')
-        contact = request.form.get('contact')
+        quantity = int(request.form.get('quantity', 1))
         instructions = request.form.get('instructions')
 
         if item:
@@ -64,10 +61,6 @@ def cart():
                 'item': item,
                 'size': size,
                 'quantity': quantity,
-                'del_or_pickup': del_or_pickup,
-                'address': address,
-                'customer_name': customer_name,
-                'contact': contact,
                 'instructions': instructions
             }
             cart = session.get('cart', [])
@@ -75,12 +68,26 @@ def cart():
             session['cart'] = cart
             flash(f'Added {quantity}x {size} {item} to your cart')
         return redirect(url_for('menu'))
-    
+
+@app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     cart = session.get('cart', [])
+
     if not cart:
         flash('Your cart is empty. Please add items to your cart before checking out.')
         return redirect(url_for('menu'))
+
+    if request.method == 'POST':
+        del_or_pickup = request.form.get('del_or_pickup')
+        address = request.form.get('address')
+        customer_name = request.form.get('customer_name')
+        contact = request.form.get('contact')
+
+        session.pop('cart', None)
+        flash('Order has been placed')
+        return redirect(url_for('index'))
+    
+    return render_template('checkout.html', active_page='checkout', cart=cart)
 
 if __name__ == '__main__':
     app.run(debug=True)

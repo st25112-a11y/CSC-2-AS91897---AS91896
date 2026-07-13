@@ -6,7 +6,7 @@ document.querySelectorAll('.order-btn').forEach(button => {
     button.addEventListener('click', () => {
         const itemName = button.getAttribute('data-name');
         
-        modalTitle.textContent = `Order ${itemName}`;
+        modalTitle.textContent = `${itemName}`;
         modalItemName.value = itemName;
         
         modal.showModal();
