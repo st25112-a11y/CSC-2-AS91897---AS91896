@@ -78,7 +78,20 @@ def help():
 
 @app.route('/invoice')
 def invoice():
-    return render_template('invoice.html')
+
+    last_order = session.get('last_order', {})
+
+    if not last_order:
+        flash('No order found. Please place an order first.')
+        return redirect(url_for('menu'))
+    
+    cart = last_order.get('cart', [])
+    customer_name = last_order.get('name', 'Customer')
+    
+    invoice_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    invoice_number = f"INV_{customer_name.replace(' ', '_')}"
+    invoice_filename = f"{invoice_number}.txt"
+    return render_template('invoice.html', invoice_number=invoice_number, name=customer_name, invoice_date=invoice_date, cart=cart)
 
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -185,10 +198,15 @@ def checkout():
         conn.commit()
         conn.close()
 
+        session['last_order'] = {
+        'cart': cart,
+        'name': customer_name
+        }
+
         session.pop('cart', None)
         flash('Order has been placed')
         return redirect(url_for('invoice'))
-    
+
     return render_template('checkout.html', active_page='checkout', cart=cart, total=total_price(cart))
 
 if __name__ == '__main__':

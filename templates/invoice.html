@@ -4,7 +4,29 @@
 
 {% block content %}
     <body>
-        <h2>shop name</h2>
-        <p>placeholder</p>
+        <h1>Invoice</h1>
+        <p>Invoice Number: {{ invoice_number }}<br>
+        Customer Name: {{ name }}<br>
+        Invoice Date: {{ invoice_date }}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Size</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                    <tr>
+                        <td>{{ item.item }}</td>
+                        <td>{{ item.size }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ "%.2f"|format(item.price * item.quantity) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </body>
 {% endblock %}
