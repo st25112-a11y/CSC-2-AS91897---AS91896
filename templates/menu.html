@@ -48,8 +48,15 @@
     <div class="right">
         <h2>Your Order</h2>
         <ul id="cartItems">
+            {% for item in cart %}
+                <li>{{ item.quantity }}x {{ item.size }} {{ item.item }}</li>
+                <form method="POST" action="{{ url_for('remove_from_cart') }}" style="display:inline;">
+                    <input type="hidden" name="item" value="{{ item.item }}">
+                    <input type="hidden" name="size" value="{{ item.size }}">
+                    <button type="submit">Remove</button>
+                </form>
+            {% endfor %}
         </ul>
-        <p>Total: $<span id="cartTotal">test</span></p>
         <button onclick="window.location.href='{{ url_for("checkout") }}'">Checkout</button>
     </div>
     <dialog id="myModal">
@@ -59,13 +66,13 @@
             <label for="size">Size:</label>
 
             <select id="size" name="size" required>
-                <option value="1"> Small</option>
-                <option value="2"> Medium</option>
-                <option value="3"> Large</option>
+                <option value="Small"> Small</option>
+                <option value="Medium"> Medium</option>
+                <option value="Large"> Large</option>
             </select><br>
 
             <label for="quantity">Quantity:</label>
-            <input type="number" name="quantity" min="1" value="1" required><br>
+            <input type="number" name="quantity" min="1" max="5" value="1" required><br>
 
             <label for="instructions">Special Instructions:</label>
             <textarea name="instructions"></textarea><br>

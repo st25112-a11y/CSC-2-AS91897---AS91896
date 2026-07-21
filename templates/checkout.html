@@ -4,15 +4,33 @@
 {% block content %}
     <h1>Checkout</h1>
     
-    <ul>
-        {% for item in cart %}
-            <li>{{ item.quantity }}x {{ item.size }} {{ item.item }}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+                <tr>
+                    <td>{{ item.item }}</td>
+                    <td>{{ item.size }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ "%.2f"|format(item.price * item.quantity) }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>
 
     <form method="POST" action="{{ url_for('checkout') }}">
+        
         <label for="del_or_pickup">Delivery or Pickup:</label>
-        <select id="del_or_pickup" name="del_or_pickup" required>
+        <select name="del_or_pickup" required>
             <option value="delivery">Delivery</option>
             <option value="pickup">Pickup</option>
         </select><br>
