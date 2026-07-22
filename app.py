@@ -147,15 +147,26 @@ def cart():
                         flash('You have reached the maximum quantity of sides in your cart')
                     return redirect(url_for('menu'))
 
-            cart_item = {
-                'item': item,
-                'size': size,
-                'quantity': quantity,
-                'instructions': instructions,
-                'price': unit_price
-            }
+            item_found = False
+            for existing_item in cart:
+                if (existing_item['item'] == item
+                    and existing_item['size'] == size
+                    and existing_item['instructions'] == instructions):
 
-            cart.append(cart_item)
+                    existing_item['quantity'] += quantity
+                    item_found = True
+                    break
+
+            if not item_found:
+                cart_item = {
+                    'item': item,
+                    'size': size,
+                    'quantity': quantity,
+                    'instructions': instructions,
+                    'price': unit_price
+                }
+
+                cart.append(cart_item)
             session['cart'] = cart
             flash(f'Added {quantity}x {size} {item} to your cart')
             return redirect(url_for('menu'))
