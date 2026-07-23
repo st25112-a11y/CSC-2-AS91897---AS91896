@@ -1,26 +1,26 @@
 {
     "Spicy Chorizo Inferno": {
-    "price": 30.99,
-    "stock": 5
-  },
+        "price": 30.99,
+        "stock": 5
+    },
     "Wagyu Beef Supreme": {
-    "price": 38.99,
-    "stock": 6
-  },
+        "price": 38.99,
+        "stock": 6
+    },
     "Truffle Mushroom Delight": {
-    "price": 28.99,
-    "stock": 12
-  },
+        "price": 28.99,
+        "stock": 12
+    },
     "Lobster & Garlic Butter": {
-    "price": 35.99,
-    "stock": 4
-  },
+        "price": 35.99,
+        "stock": 4
+    },
     "Prosciutto & Arugula": {
-    "price": 27.99,
-    "stock": 8
-  },
+        "price": 27.99,
+        "stock": 8
+    },
     "BBQ Pulled Pork": {
-    "price": 29.99,
-    "stock": 10
-  }
+        "price": 29.99,
+        "stock": 10
+    }
 }

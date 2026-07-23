@@ -91,7 +91,8 @@ def invoice():
     invoice_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     invoice_number = f"INV_{customer_name.replace(' ', '_')}"
     invoice_filename = f"{invoice_number}.txt"
-    return render_template('invoice.html', invoice_number=invoice_number, name=customer_name, invoice_date=invoice_date, cart=cart)
+    total = total_price(cart)
+    return render_template('invoice.html', invoice_number=invoice_number, name=customer_name, invoice_date=invoice_date, cart=cart, total=total)
 
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -104,37 +105,68 @@ def cart():
 
         if item:
             cart = session.get('cart', [])
-            current_total_quantity = sum(i['quantity'] for i in cart)
             classic_pizzas, gourmet_pizzas, sides = load_data()
             unit_price = 0
+            item_type = None
 
             if item in classic_pizzas:
                 unit_price = float(classic_pizzas[item]['price'])
+                item_type = 'pizza'
             elif item in gourmet_pizzas:
                 unit_price = float(gourmet_pizzas[item]['price'])
+                item_type = 'pizza'
             elif item in sides:
                 unit_price = float(sides[item]['price'])
+                item_type = 'side'
 
-            cart = session.get('cart', [])
-            current_total_quantity = sum(i['quantity'] for i in cart)
+            current_pizza_qty = 0
+            current_sides_qty = 0
 
-            if current_total_quantity + quantity > 5:
-                remaining_quantity = 5 - current_total_quantity
-                if remaining_quantity > 0:
-                    flash(f'You can only add {remaining_quantity} more to your cart')
-                else:
-                    flash('You have reached the maximum quantity for this item in your cart')
-                return redirect(url_for('menu'))
 
-            cart_item = {
-                'item': item,
-                'size': size,
-                'quantity': quantity,
-                'instructions': instructions,
-                'price': unit_price
-            }
+            for i in cart:
+                if i['item'] in classic_pizzas or i['item'] in gourmet_pizzas:
+                    current_pizza_qty += i['quantity']
+                elif i['item'] in sides:
+                    current_sides_qty += i['quantity']
 
-            cart.append(cart_item)
+            if item_type == 'pizza':
+                if current_pizza_qty + quantity > 5:
+                    remaining_quantity = 5 - current_pizza_qty
+                    if remaining_quantity > 0:
+                        flash(f'You can only add {remaining_quantity} more pizzas to your cart')
+                    else:
+                        flash('You have reached the maximum quantity of pizzasin your cart')
+                    return redirect(url_for('menu'))
+
+            elif item_type == 'side':
+                if current_sides_qty + quantity > 5:
+                    remaining_quantity = 5 - current_sides_qty
+                    if remaining_quantity > 0:
+                        flash(f'You can only add {remaining_quantity} more sides to your cart')
+                    else:
+                        flash('You have reached the maximum quantity of sides in your cart')
+                    return redirect(url_for('menu'))
+
+            item_found = False
+            for existing_item in cart:
+                if (existing_item['item'] == item
+                    and existing_item['size'] == size
+                    and existing_item['instructions'] == instructions):
+
+                    existing_item['quantity'] += quantity
+                    item_found = True
+                    break
+
+            if not item_found:
+                cart_item = {
+                    'item': item,
+                    'size': size,
+                    'quantity': quantity,
+                    'instructions': instructions,
+                    'price': unit_price
+                }
+
+                cart.append(cart_item)
             session['cart'] = cart
             flash(f'Added {quantity}x {size} {item} to your cart')
             return redirect(url_for('menu'))
@@ -197,6 +229,34 @@ def checkout():
         
         conn.commit()
         conn.close()
+
+        classic_pizzas, gourmet_pizzas, sides = load_data()
+
+        for item in cart:
+            item_name = item['item']
+            qty_ordered = item['quantity']
+
+            if item_name in classic_pizzas:
+                classic_pizzas[item_name]['stock'] -= qty_ordered
+                if classic_pizzas[item_name]['stock'] < 0:
+                    classic_pizzas[item_name]['stock'] = 0
+
+            elif item_name in gourmet_pizzas:
+                gourmet_pizzas[item_name]['stock'] -= qty_ordered
+                if gourmet_pizzas[item_name]['stock'] < 0:
+                    gourmet_pizzas[item_name]['stock'] = 0
+
+            elif item_name in sides:
+                sides[item_name]['stock'] -= qty_ordered
+                if sides[item_name]['stock'] < 0:
+                    sides[item_name]['stock'] = 0
+
+        with open('data/classic_pizzas.json', 'w') as f:
+            json.dump(classic_pizzas, f, indent=4)
+        with open('data/gourmet_pizzas.json', 'w') as f:
+            json.dump(gourmet_pizzas, f, indent=4)
+        with open('data/sides.json', 'w') as f:
+            json.dump(sides, f, indent=4)
 
         session['last_order'] = {
         'cart': cart,

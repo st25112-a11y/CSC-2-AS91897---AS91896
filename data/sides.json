@@ -1,30 +1,30 @@
 {
-  "Garlic Bread": {
-    "price": 6.50,
-    "stock": 25
-  },
-  "Cheesy Garlic Bread": {
-    "price": 8.50,
-    "stock": 20
-  },
-  "Mozzarella Sticks": {
-    "price": 9.90,
-    "stock": 18
-  },
-  "Buffalo Wings": {
-    "price": 12.90,
-    "stock": 15
-  },
-  "BBQ Chicken Wings": {
-    "price": 12.90,
-    "stock": 14
-  },
-  "Loaded Potato Wedges": {
-    "price": 10.50,
-    "stock": 16
-  },
-  "Onion Rings": {
-    "price": 7.90,
-    "stock": 22
-  }
+    "Garlic Bread": {
+        "price": 6.5,
+        "stock": 25
+    },
+    "Cheesy Garlic Bread": {
+        "price": 8.5,
+        "stock": 20
+    },
+    "Mozzarella Sticks": {
+        "price": 9.9,
+        "stock": 18
+    },
+    "Buffalo Wings": {
+        "price": 12.9,
+        "stock": 15
+    },
+    "BBQ Chicken Wings": {
+        "price": 12.9,
+        "stock": 14
+    },
+    "Loaded Potato Wedges": {
+        "price": 10.5,
+        "stock": 16
+    },
+    "Onion Rings": {
+        "price": 7.9,
+        "stock": 22
+    }
 }

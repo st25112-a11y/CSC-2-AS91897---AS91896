@@ -230,6 +230,34 @@ def checkout():
         conn.commit()
         conn.close()
 
+        classic_pizzas, gourmet_pizzas, sides = load_data()
+
+        for item in cart:
+            item_name = item['item']
+            qty_ordered = item['quantity']
+
+            if item_name in classic_pizzas:
+                classic_pizzas[item_name]['stock'] -= qty_ordered
+                if classic_pizzas[item_name]['stock'] < 0:
+                    classic_pizzas[item_name]['stock'] = 0
+
+            elif item_name in gourmet_pizzas:
+                gourmet_pizzas[item_name]['stock'] -= qty_ordered
+                if gourmet_pizzas[item_name]['stock'] < 0:
+                    gourmet_pizzas[item_name]['stock'] = 0
+
+            elif item_name in sides:
+                sides[item_name]['stock'] -= qty_ordered
+                if sides[item_name]['stock'] < 0:
+                    sides[item_name]['stock'] = 0
+
+        with open('data/classic_pizzas.json', 'w') as f:
+            json.dump(classic_pizzas, f, indent=4)
+        with open('data/gourmet_pizzas.json', 'w') as f:
+            json.dump(gourmet_pizzas, f, indent=4)
+        with open('data/sides.json', 'w') as f:
+            json.dump(sides, f, indent=4)
+
         session['last_order'] = {
         'cart': cart,
         'name': customer_name

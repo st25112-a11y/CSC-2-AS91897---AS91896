@@ -1,11 +1,11 @@
 {
     "Peperoni Pizza": {
         "price": 19.99,
-        "stock": 50
+        "stock": 47
     },
     "Cheese Pizza": {
         "price": 15.99,
-        "stock": 60
+        "stock": 59
     },
     "Veggie Pizza": {
         "price": 16.99,
