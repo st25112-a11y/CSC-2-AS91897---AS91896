@@ -4,60 +4,62 @@
 
 {% block content %}
     <h1>Our Menu</h1>
-    <div class="left">
-        <h2>Classic Pizzas</h2>
-        <table>
-            {% for name, details in classic_pizzas.items() %}
-            <tr>
-                <td>
-                    <h2>{{ name }}</h2>
-                    <p>Price: ${{ details.price }}</p>
-                    <p>Stock: {{ details.stock }}</p>
-                    <button class="order-btn" data-name="{{ name }}">Order</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        <h2>Gourmet Pizzas</h2>
-        <table>
-            {% for name, details in gourmet_pizzas.items() %}
-            <tr>
-                <td>
-                    <h2>{{ name }}</h2>
-                    <p>Price: ${{ details.price }}</p>
-                    <p>Stock: {{ details.stock }}</p>
-                    <button class="order-btn" data-name="{{ name }}">Order</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        <h2>Sides</h2>
-        <table>
-            {% for name, details in sides.items() %}
-            <tr>
-                <td>
-                    <h2>{{ name }}</h2>
-                    <p>Price: ${{ details.price }}</p>
-                    <p>Stock: {{ details.stock }}</p>
-                    <button class="order-btn" data-name="{{ name }}">Order</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <div class="right">
-        <h2>Your Order</h2>
-        <ul id="cartItems">
-            {% for item in cart %}
-                <li>{{ item.quantity }}x {{ item.size }} {{ item.item }}</li>
-                <form method="POST" action="{{ url_for('remove_from_cart') }}" style="display:inline;">
-                    <input type="hidden" name="item" value="{{ item.item }}">
-                    <input type="hidden" name="size" value="{{ item.size }}">
-                    <button type="submit">Remove</button>
-                </form>
-            {% endfor %}
-        </ul>
-        <button onclick="window.location.href='{{ url_for("checkout") }}'">Checkout</button>
+    <div class="container">
+        <div class="left">
+            <h2>Classic Pizzas</h2>
+            <table>
+                {% for name, details in classic_pizzas.items() %}
+                <tr>
+                    <td>
+                        <h2>{{ name }}</h2>
+                        <p>Price: ${{ details.price }}</p>
+                        <p>Stock: {{ details.stock }}</p>
+                        <button class="order-btn" data-name="{{ name }}">Order</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <h2>Gourmet Pizzas</h2>
+            <table>
+                {% for name, details in gourmet_pizzas.items() %}
+                <tr>
+                    <td>
+                        <h2>{{ name }}</h2>
+                        <p>Price: ${{ details.price }}</p>
+                        <p>Stock: {{ details.stock }}</p>
+                        <button class="order-btn" data-name="{{ name }}">Order</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <h2>Sides</h2>
+            <table>
+                {% for name, details in sides.items() %}
+                <tr>
+                    <td>
+                        <h2>{{ name }}</h2>
+                        <p>Price: ${{ details.price }}</p>
+                        <p>Stock: {{ details.stock }}</p>
+                        <button class="order-btn" data-name="{{ name }}">Order</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="right">
+            <h2>Your Order</h2>
+            <ul id="cartItems">
+                {% for item in cart %}
+                    <li>{{ item.quantity }}x {{ item.size }} {{ item.item }}</li>
+                    <form method="POST" action="{{ url_for('remove_from_cart') }}" style="display:inline;">
+                        <input type="hidden" name="item" value="{{ item.item }}">
+                        <input type="hidden" name="size" value="{{ item.size }}">
+                        <button type="submit">Remove</button>
+                    </form>
+                {% endfor %}
+            </ul>
+            <button onclick="window.location.href='{{ url_for("checkout") }}'">Checkout</button>
+        </div>
     </div>
     <dialog id="myModal">
         <h2 id="modalTitle"></h2>
