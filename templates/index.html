@@ -4,7 +4,27 @@
 
 {% block content %}
     <body>
-        <h2>shop name</h2>
-        <p>placeholder</p>
+        <h2>Dream Pizzas</h2>
+        <p>Welcome to Dream Pizzas! We offer a variety of delicious pizzas and sides for you to enjoy. Browse our menu and place your order today!</p>
+        <h3>Featured Deals</h3>
+        <p>{{ feature_deal }} with {{ feature_deal_side }} - Only ${{ "%.2f"|format(feature_deal_price) }}!</p>
+        <h3>Popular Items</h3>
+        <ul>
+            {% for item in popular_pizzas %}
+                <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
+                <p>Ordered {{ item.total_ordered }} times</p>
+                <button class="home-order-btn" data-name="{{ item.name }}">Order</button>
+            {% endfor %}
+            {% for item in popular_gourmet_pizzas %}
+                <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
+                <p>Ordered {{ item.total_ordered }} times</p>
+                <button class="home-order-btn" data-name="{{ item.name }}">Order</button>
+            {% endfor %}
+            {% for item in popular_sides %}
+                <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
+                <p>Ordered {{ item.total_ordered }} times</p>
+                <button class="home-order-btn" data-name="{{ item.name }}">Order</button>
+            {% endfor %}
+        </ul>
     </body>
 {% endblock %}

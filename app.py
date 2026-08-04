@@ -1,6 +1,7 @@
 import datetime
 import json
 import sqlite3
+import random
 
 from flask import Flask, render_template, request, session, flash, redirect, url_for
 
@@ -51,7 +52,47 @@ init_db()
 
 @app.route('/')
 def index():
-    return render_template('index.html', active_page='index')
+    cart = session.get('cart', [])
+    classic_pizzas, gourmet_pizzas, sides = load_data()
+
+    feature_deal_pizza = random.choice(list(classic_pizzas.keys()) or list(gourmet_pizzas.keys()))
+    feature_deal_side = random.choice(list(sides.keys()))
+    feature_deal_price = float(classic_pizzas.get(feature_deal_pizza, {}).get('price', 0)) + float(sides.get(feature_deal_side, {}).get('price', 0))
+
+    popular_pizzas, popular_gourmet_pizzas, popular_sides = get_popular_items()
+
+    return render_template('index.html', active_page='index', feature_deal=feature_deal_pizza,  feature_deal_price=feature_deal_price, cart=cart, popular_pizzas=popular_pizzas, popular_gourmet_pizzas=popular_gourmet_pizzas, popular_sides=popular_sides)
+
+def get_popular_items(limit=4):
+    conn = sqlite3.connect('dream_pizza.db')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute('''
+        SELECT item_name, SUM(quantity) AS total_ordered
+        FROM order_items
+        GROUP BY item_name
+        ORDER BY total_ordered DESC
+    ''')
+    results = c.fetchall()
+    conn.close()
+
+    classic_pizzas, gourmet_pizzas, sides = load_data()
+
+    popular_pizzas = []
+    popular_gourmet_pizzas = []
+    popular_sides = []
+
+    for row in results:
+        name = row['item_name']
+        if name in classic_pizzas and len(popular_pizzas) < limit:
+            popular_pizzas.append({'name': name, 'total_ordered': row['total_ordered'], **classic_pizzas[name]})
+        elif name in gourmet_pizzas and len(popular_gourmet_pizzas) < limit:
+            popular_gourmet_pizzas.append({'name': name, 'total_ordered': row['total_ordered'], **gourmet_pizzas[name]})
+        elif name in sides and len(popular_sides) < limit:
+            popular_sides.append({'name': name, 'total_ordered': row['total_ordered'], **sides[name]})
+
+    return popular_pizzas, popular_gourmet_pizzas, popular_sides
 
 @app.route('/about')
 def about():
@@ -70,7 +111,22 @@ def contact():
 
 @app.route('/order_history')
 def order_history():
-    return render_template('order_history.html')
+    conn = sqlite3.connect('dream_pizza.db')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute('''
+        SELECT orders.id, orders.customer_name, orders.total, orders.order_date,
+               order_items.item_name, order_items.size, order_items.quantity
+        FROM orders
+        JOIN order_items ON orders.id = order_items.order_id
+        ORDER BY orders.order_date DESC
+    ''')
+
+    orders = c.fetchall()
+    conn.close()
+
+    return render_template('order_history.html', orders=orders)
 
 @app.route('/help')
 def help():
