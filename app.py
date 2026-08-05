@@ -102,8 +102,9 @@ def about():
 def menu():
     cart = session.get('cart', [])
     classic_pizzas, gourmet_pizzas, sides = load_data()
+    open_item = request.args.get('item')
 
-    return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides, cart=cart)
+    return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides, cart=cart, open_item=open_item)
 
 @app.route('/contact')
 def contact():

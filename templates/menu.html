@@ -84,4 +84,12 @@
         </form>
     </dialog>
     <script src="{{ url_for('static', filename='modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='modal.js') }}"></script>
+    {% if open_item %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            openModal({{ open_item|tojson }});
+        });
+    </script>
+    {% endif %}
 {% endblock %}
