@@ -11,16 +11,19 @@
         <button class="home-order-btn" data-name="{{ feature_deal }}">Order Now</button>
         <h3>Popular Items</h3>
             <ul>
+                <h3>Classic Pizzas</h3>
             {% for item in popular_pizzas %}
                 <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
                 <p>Ordered {{ item.total_ordered }} times</p>
                 <a href="{{ url_for('menu', item=item.name) }}" class="home-order-btn">Order</a>
             {% endfor %}
+            <h3>Gourmet Pizzas</h3>
             {% for item in popular_gourmet_pizzas %}
                 <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
                 <p>Ordered {{ item.total_ordered }} times</p>
                 <a href="{{ url_for('menu', item=item.name) }}" class="home-order-btn">Order</a>
             {% endfor %}
+            <h3>Sides</h3>
             {% for item in popular_sides %}
                 <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
                 <p>Ordered {{ item.total_ordered }} times</p>

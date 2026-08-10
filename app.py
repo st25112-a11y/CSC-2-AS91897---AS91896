@@ -61,9 +61,9 @@ def index():
 
     popular_pizzas, popular_gourmet_pizzas, popular_sides = get_popular_items()
 
-    return render_template('index.html', active_page='index', feature_deal=feature_deal_pizza,  feature_deal_price=feature_deal_price, cart=cart, popular_pizzas=popular_pizzas, popular_gourmet_pizzas=popular_gourmet_pizzas, popular_sides=popular_sides)
+    return render_template('index.html', active_page='index', feature_deal=feature_deal_pizza,  feature_deal_price=feature_deal_price, feature_deal_side=feature_deal_side, cart=cart, popular_pizzas=popular_pizzas, popular_gourmet_pizzas=popular_gourmet_pizzas, popular_sides=popular_sides)
 
-def get_popular_items(limit=4):
+def get_popular_items(limit=3):
     conn = sqlite3.connect('dream_pizza.db')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
