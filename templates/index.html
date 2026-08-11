@@ -7,8 +7,15 @@
         <h2>Dream Pizzas</h2>
         <p>Welcome to Dream Pizzas! We offer a variety of delicious pizzas and sides for you to enjoy. Browse our menu and place your order today!</p>
         <h3>Featured Deals</h3>
-        <p>{{ feature_deal }} with {{ feature_deal_side }} - Only ${{ "%.2f"|format(feature_deal_price) }}!</p>
-        <button class="home-order-btn" data-name="{{ feature_deal }}">Order Now</button>
+        <p>{{ feature_pizza_size }} {{ feature_deal }} with {{ feature_side_size }} {{ feature_deal_side }} - Only ${{ "%.2f"|format(feature_deal_price) }}!</p>
+        <form action="{{ url_for('add_featured_deal') }}" method="POST" style="display: inline;">
+            <input type="hidden" name="pizza" value="{{ feature_deal }}">
+            <input type="hidden" name="pizza_size" value="{{ feature_pizza_size }}">
+            <input type="hidden" name="side" value="{{ feature_deal_side }}">
+            <input type="hidden" name="side_size" value="{{ feature_side_size }}">
+            
+            <button type="submit" class="home-order-btn">Add Deal to Cart</button>
+        </form>
         <h3>Popular Items</h3>
             <ul>
                 <h3>Classic Pizzas</h3>

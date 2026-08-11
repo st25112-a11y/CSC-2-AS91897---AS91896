@@ -55,13 +55,50 @@ def index():
     cart = session.get('cart', [])
     classic_pizzas, gourmet_pizzas, sides = load_data()
 
-    feature_deal_pizza = random.choice(list(classic_pizzas.keys()) or list(gourmet_pizzas.keys()))
+    all_pizzas = {**classic_pizzas, **gourmet_pizzas}
+
+    feature_deal_pizza = random.choice(list(all_pizzas.keys()))
     feature_deal_side = random.choice(list(sides.keys()))
-    feature_deal_price = float(classic_pizzas.get(feature_deal_pizza, {}).get('price', 0)) + float(sides.get(feature_deal_side, {}).get('price', 0))
+
+    pizza_price = float(all_pizzas[feature_deal_pizza].get('price', 0))
+    side_price = float(sides[feature_deal_side].get('price', 0))
+    feature_deal_price = pizza_price + (side_price * 0.8)
+
+    feature_pizza_size = random.choice(["Small", "Medium", "Large"])
+    feature_side_size = random.choice(["Small", "Medium", "Large"])
 
     popular_pizzas, popular_gourmet_pizzas, popular_sides = get_popular_items()
 
-    return render_template('index.html', active_page='index', feature_deal=feature_deal_pizza,  feature_deal_price=feature_deal_price, feature_deal_side=feature_deal_side, cart=cart, popular_pizzas=popular_pizzas, popular_gourmet_pizzas=popular_gourmet_pizzas, popular_sides=popular_sides)
+    return render_template('index.html', active_page='index', feature_deal=feature_deal_pizza, feature_deal_price=feature_deal_price, feature_pizza_size=feature_pizza_size, feature_side_size=feature_side_size, cart=cart, popular_pizzas=popular_pizzas, popular_gourmet_pizzas=popular_gourmet_pizzas, popular_sides=popular_sides, feature_deal_side=feature_deal_side)
+
+@app.route('/add_featured_deal', methods=['POST'])
+def add_featured_deal():
+    pizza = request.form.get('pizza')
+    pizza_size = request.form.get('pizza_size')
+    side = request.form.get('side')
+    side_size = request.form.get('side_size')
+
+    cart = session.get('cart', [])
+    
+    cart.append({
+        'item': pizza,
+        'size': pizza_size,
+        'quantity': 1,
+        'instructions': 'Featured Deal',
+        'is_deal': True 
+    })
+    
+    cart.append({
+        'item': side,
+        'size': side_size,
+        'quantity': 1,
+        'instructions': 'Featured Deal',
+        'is_deal': True 
+    })
+    
+    session['cart'] = cart
+    flash('Featured deal added directly to your cart!')
+    return redirect(url_for('index'))
 
 def get_popular_items(limit=3):
     conn = sqlite3.connect('dream_pizza.db')
@@ -249,6 +286,8 @@ def total_price(cart):
             price = float(gourmet_pizzas[item['item']]['price'])
         elif item['item'] in sides:
             price = float(sides[item['item']]['price'])
+            if item.get('is_deal'):
+                price *= 0.8
         else:
             price = 0
         total += price * item['quantity']
