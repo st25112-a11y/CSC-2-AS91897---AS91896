@@ -32,7 +32,3 @@ function toggleAddress() {
 deliverySelect.addEventListener("change", toggleAddress);
 
 toggleAddress();
-
-deliverySelect.addEventListener("change", toggleAddress);
-
-toggleAddress();
