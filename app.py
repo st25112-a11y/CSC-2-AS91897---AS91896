@@ -78,6 +78,12 @@ def add_featured_deal():
     side = request.form.get('side')
     side_size = request.form.get('side_size')
 
+    classic_pizzas, gourmet_pizzas, sides = load_data()
+    all_pizzas = {**classic_pizzas, **gourmet_pizzas}
+
+    pizza_price = float(all_pizzas.get(pizza, {}).get('price', 0))
+    side_base_price = float(sides.get(side, {}).get('price', 0))
+
     cart = session.get('cart', [])
     
     cart.append({
@@ -85,7 +91,8 @@ def add_featured_deal():
         'size': pizza_size,
         'quantity': 1,
         'instructions': 'Featured Deal',
-        'is_deal': True 
+        'is_deal': True,
+        'price': pizza_price
     })
     
     cart.append({
@@ -93,7 +100,8 @@ def add_featured_deal():
         'size': side_size,
         'quantity': 1,
         'instructions': 'Featured Deal',
-        'is_deal': True 
+        'is_deal': True,
+        'price': side_base_price * 0.8
     })
     
     session['cart'] = cart
