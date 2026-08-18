@@ -2,8 +2,9 @@ import datetime
 import json
 import sqlite3
 import random
+import time
 
-from flask import Flask, render_template, request, session, flash, redirect, url_for
+from flask import Flask, jsonify, render_template, request, session, flash, redirect, url_for
 
 app = Flask(__name__)
 app.secret_key = 'key'
@@ -50,26 +51,59 @@ def init_db():
 
 init_db()
 
+active_deal = {
+    "pizza": None,
+    "side": None,
+    "pizza_size": None,
+    "side_size": None,
+    "price": 0,
+    "expires_at": 0
+}
+
+def get_or_create_deal():
+    global active_deal
+    current_time = int(time.time())
+    
+    # If the current time has passed the expiration, make a new deal
+    if current_time > active_deal["expires_at"]:
+        classic_pizzas, gourmet_pizzas, sides = load_data()
+        all_pizzas = {**classic_pizzas, **gourmet_pizzas}
+        
+        active_deal["pizza"] = random.choice(list(all_pizzas.keys()))
+        active_deal["side"] = random.choice(list(sides.keys()))
+        active_deal["pizza_size"] = random.choice(["Small", "Medium", "Large"])
+        active_deal["side_size"] = random.choice(["Small", "Medium", "Large"])
+        
+        pizza_price = float(all_pizzas[active_deal["pizza"]].get('price', 0))
+        side_price = float(sides[active_deal["side"]].get('price', 0))
+        active_deal["price"] = pizza_price + (side_price * 0.8)
+        
+        active_deal["expires_at"] = current_time + 60 
+        
+    return active_deal
+
+@app.route('/api/get_deal')
+def api_get_deal():
+    return jsonify(get_or_create_deal())
+
 @app.route('/')
 def index():
     cart = session.get('cart', [])
-    classic_pizzas, gourmet_pizzas, sides = load_data()
-
-    all_pizzas = {**classic_pizzas, **gourmet_pizzas}
-
-    feature_deal_pizza = random.choice(list(all_pizzas.keys()))
-    feature_deal_side = random.choice(list(sides.keys()))
-
-    pizza_price = float(all_pizzas[feature_deal_pizza].get('price', 0))
-    side_price = float(sides[feature_deal_side].get('price', 0))
-    feature_deal_price = pizza_price + (side_price * 0.8)
-
-    feature_pizza_size = random.choice(["Small", "Medium", "Large"])
-    feature_side_size = random.choice(["Small", "Medium", "Large"])
-
+    current_deal = get_or_create_deal()
     popular_pizzas, popular_gourmet_pizzas, popular_sides = get_popular_items()
 
-    return render_template('index.html', active_page='index', feature_deal=feature_deal_pizza, feature_deal_price=feature_deal_price, feature_pizza_size=feature_pizza_size, feature_side_size=feature_side_size, cart=cart, popular_pizzas=popular_pizzas, popular_gourmet_pizzas=popular_gourmet_pizzas, popular_sides=popular_sides, feature_deal_side=feature_deal_side)
+    return render_template('index.html', 
+        active_page='index', 
+        feature_deal=current_deal["pizza"], 
+        feature_deal_price=current_deal["price"], 
+        feature_pizza_size=current_deal["pizza_size"], 
+        feature_side_size=current_deal["side_size"],
+        feature_deal_side=current_deal["side"],
+        expires_at=current_deal["expires_at"],
+        cart=cart, 
+        popular_pizzas=popular_pizzas, 
+        popular_gourmet_pizzas=popular_gourmet_pizzas, 
+        popular_sides=popular_sides)
 
 @app.route('/add_featured_deal', methods=['POST'])
 def add_featured_deal():
@@ -106,7 +140,7 @@ def add_featured_deal():
     
     session['cart'] = cart
     flash('Featured deal added directly to your cart!')
-    return redirect(url_for('index'))
+    return redirect(url_for('menu'))
 
 def get_popular_items(limit=3):
     conn = sqlite3.connect('dream_pizza.db')

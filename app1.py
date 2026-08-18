@@ -2,8 +2,9 @@ import datetime
 import json
 import sqlite3
 import random
+import time
 
-from flask import Flask, render_template, request, session, flash, redirect, url_for
+from flask import Flask, jsonify, render_template, request, session, flash, redirect, url_for
 
 app = Flask(__name__)
 app.secret_key = 'key'
@@ -50,20 +51,98 @@ def init_db():
 
 init_db()
 
+active_deal = {
+    "pizza": None,
+    "side": None,
+    "pizza_size": None,
+    "side_size": None,
+    "price": 0,
+    "expires_at": 0
+}
+
+def get_or_create_deal():
+    global active_deal
+    current_time = int(time.time())
+    
+    # If the current time has passed the expiration, make a new deal
+    if current_time > active_deal["expires_at"]:
+        classic_pizzas, gourmet_pizzas, sides = load_data()
+        all_pizzas = {**classic_pizzas, **gourmet_pizzas}
+        
+        active_deal["pizza"] = random.choice(list(all_pizzas.keys()))
+        active_deal["side"] = random.choice(list(sides.keys()))
+        active_deal["pizza_size"] = random.choice(["Small", "Medium", "Large"])
+        active_deal["side_size"] = random.choice(["Small", "Medium", "Large"])
+        
+        pizza_price = float(all_pizzas[active_deal["pizza"]].get('price', 0))
+        side_price = float(sides[active_deal["side"]].get('price', 0))
+        active_deal["price"] = pizza_price + (side_price * 0.8)
+        
+        active_deal["expires_at"] = current_time + 60 
+        
+    return active_deal
+
+@app.route('/api/get_deal')
+def api_get_deal():
+    return jsonify(get_or_create_deal())
+
 @app.route('/')
 def index():
     cart = session.get('cart', [])
-    classic_pizzas, gourmet_pizzas, sides = load_data()
-
-    feature_deal_pizza = random.choice(list(classic_pizzas.keys()) or list(gourmet_pizzas.keys()))
-    feature_deal_side = random.choice(list(sides.keys()))
-    feature_deal_price = float(classic_pizzas.get(feature_deal_pizza, {}).get('price', 0)) + float(sides.get(feature_deal_side, {}).get('price', 0))
-
+    current_deal = get_or_create_deal()
     popular_pizzas, popular_gourmet_pizzas, popular_sides = get_popular_items()
 
-    return render_template('index.html', active_page='index', feature_deal=feature_deal_pizza,  feature_deal_price=feature_deal_price, cart=cart, popular_pizzas=popular_pizzas, popular_gourmet_pizzas=popular_gourmet_pizzas, popular_sides=popular_sides)
+    return render_template('index.html', 
+        active_page='index', 
+        feature_deal=current_deal["pizza"], 
+        feature_deal_price=current_deal["price"], 
+        feature_pizza_size=current_deal["pizza_size"], 
+        feature_side_size=current_deal["side_size"],
+        feature_deal_side=current_deal["side"],
+        expires_at=current_deal["expires_at"],
+        cart=cart, 
+        popular_pizzas=popular_pizzas, 
+        popular_gourmet_pizzas=popular_gourmet_pizzas, 
+        popular_sides=popular_sides)
 
-def get_popular_items(limit=4):
+@app.route('/add_featured_deal', methods=['POST'])
+def add_featured_deal():
+    pizza = request.form.get('pizza')
+    pizza_size = request.form.get('pizza_size')
+    side = request.form.get('side')
+    side_size = request.form.get('side_size')
+
+    classic_pizzas, gourmet_pizzas, sides = load_data()
+    all_pizzas = {**classic_pizzas, **gourmet_pizzas}
+
+    pizza_price = float(all_pizzas.get(pizza, {}).get('price', 0))
+    side_base_price = float(sides.get(side, {}).get('price', 0))
+
+    cart = session.get('cart', [])
+    
+    cart.append({
+        'item': pizza,
+        'size': pizza_size,
+        'quantity': 1,
+        'instructions': 'Featured Deal',
+        'is_deal': True,
+        'price': pizza_price
+    })
+    
+    cart.append({
+        'item': side,
+        'size': side_size,
+        'quantity': 1,
+        'instructions': 'Featured Deal',
+        'is_deal': True,
+        'price': side_base_price * 0.8
+    })
+    
+    session['cart'] = cart
+    flash('Featured deal added directly to your cart!')
+    return redirect(url_for('menu'))
+
+def get_popular_items(limit=3):
     conn = sqlite3.connect('dream_pizza.db')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -249,6 +328,8 @@ def total_price(cart):
             price = float(gourmet_pizzas[item['item']]['price'])
         elif item['item'] in sides:
             price = float(sides[item['item']]['price'])
+            if item.get('is_deal'):
+                price *= 0.8
         else:
             price = 0
         total += price * item['quantity']
