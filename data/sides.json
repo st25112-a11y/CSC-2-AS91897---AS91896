@@ -9,7 +9,7 @@
     },
     "Mozzarella Sticks": {
         "price": 9.9,
-        "stock": 17
+        "stock": 16
     },
     "Buffalo Wings": {
         "price": 12.9,
@@ -17,7 +17,7 @@
     },
     "BBQ Chicken Wings": {
         "price": 12.9,
-        "stock": 14
+        "stock": 13
     },
     "Loaded Potato Wedges": {
         "price": 10.5,

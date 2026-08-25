@@ -80,7 +80,6 @@ def get_or_create_deal():
     global active_deal
     current_time = int(time.time())
     
-    # If the current time has passed the expiration, make a new deal
     if current_time > active_deal["expires_at"]:
         classic_pizzas, gourmet_pizzas, sides = load_data()
         all_pizzas = {**classic_pizzas, **gourmet_pizzas}
