@@ -3,31 +3,29 @@
 {% block title %}Invoice - Dream Pizzas{% endblock %}
 
 {% block content %}
-    <body>
-        <h1>Invoice</h1>
-        <p>Invoice ID: {{ invoice_number }}<br>
-        Customer Name: {{ name }}<br>
-        Invoice Date: {{ invoice_date }}</p>
-        <table>
-            <thead>
+    <h1>Invoice</h1>
+    <p>Invoice ID: {{ invoice_number }}<br>
+    Customer Name: {{ name }}<br>
+    Invoice Date: {{ invoice_date }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
                 <tr>
-                    <th>Item</th>
-                    <th>Size</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
+                    <td>{{ item.item }}</td>
+                    <td>{{ item.size }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ "%.2f"|format(item.price * item.quantity) }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for item in cart %}
-                    <tr>
-                        <td>{{ item.item }}</td>
-                        <td>{{ item.size }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>${{ "%.2f"|format(item.price * item.quantity) }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>
-    </body>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>
 {% endblock %}
