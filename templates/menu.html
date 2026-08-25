@@ -7,45 +7,42 @@
     <div class="container">
         <div class="left">
             <h2>Classic Pizzas</h2>
-            <table>
+            <div class="menu-grid">
                 {% for name, details in classic_pizzas.items() %}
-                <tr>
-                    <td>
-                        <h2>{{ name }}</h2>
-                        <p>Price: ${{ details.price }}</p>
-                        <p>Stock: {{ details.stock }}</p>
-                        <button class="order-btn" data-name="{{ name }}">Order</button>
-                    </td>
-                </tr>
+                <div class="menu-card">
+                    <h3>{{ name }}</h3>
+                    <p>Price: ${{ details.price }}</p>
+                    <p>Stock: {{ details.stock }}</p>
+                    <button class="order-btn" data-name="{{ name }}">Order</button>
+                </div>
                 {% endfor %}
-            </table>
+            </div>
+
             <h2>Gourmet Pizzas</h2>
-            <table>
+            <div class="menu-grid">
                 {% for name, details in gourmet_pizzas.items() %}
-                <tr>
-                    <td>
-                        <h2>{{ name }}</h2>
-                        <p>Price: ${{ details.price }}</p>
-                        <p>Stock: {{ details.stock }}</p>
-                        <button class="order-btn" data-name="{{ name }}">Order</button>
-                    </td>
-                </tr>
+                <div class="menu-card">
+                    <h3>{{ name }}</h3>
+                    <p>Price: ${{ details.price }}</p>
+                    <p>Stock: {{ details.stock }}</p>
+                    <button class="order-btn" data-name="{{ name }}">Order</button>
+                </div>
                 {% endfor %}
-            </table>
+            </div>
+
             <h2>Sides</h2>
-            <table>
+            <div class="menu-grid">
                 {% for name, details in sides.items() %}
-                <tr>
-                    <td>
-                        <h2>{{ name }}</h2>
-                        <p>Price: ${{ details.price }}</p>
-                        <p>Stock: {{ details.stock }}</p>
-                        <button class="order-btn" data-name="{{ name }}">Order</button>
-                    </td>
-                </tr>
+                <div class="menu-card">
+                    <h3>{{ name }}</h3>
+                    <p>Price: ${{ details.price }}</p>
+                    <p>Stock: {{ details.stock }}</p>
+                    <button class="order-btn" data-name="{{ name }}">Order</button>
+                </div>
                 {% endfor %}
-            </table>
+            </div>
         </div>
+
         <div class="right">
             <h2>Your Order</h2>
             <ul id="cartItems">
@@ -61,12 +58,13 @@
             <button onclick="window.location.href='{{ url_for("checkout") }}'">Checkout</button>
         </div>
     </div>
+
+    <!-- Your exact modal code remains below -->
     <dialog id="myModal">
         <h2 id="modalTitle"></h2>
         <form method="POST" action="{{ url_for('cart') }}">
             <input type="hidden" id="modalItemName" name="item" required>
             <label for="size">Size:</label>
-
             <select id="size" name="size" required>
                 <option value="Small"> Small</option>
                 <option value="Medium"> Medium</option>
