@@ -299,3 +299,47 @@ footer {
 .menu-card .order-btn {
     margin-top: 15px;
 }
+
+
+/* Responsive Design */
+
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .left, .right {
+        width: 100%;
+    }
+
+    .right {
+        position: relative;
+        top: 0;
+        margin-top: 30px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* For Mobile Phones (under 600px) */
+@media (max-width: 600px) {
+    .menu-grid {
+        grid-template-columns: 1fr; 
+    }
+    
+    .main-links ul {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .main-links ul a {
+        padding: 15px 0;
+        border-bottom: 1px solid #333;
+    }
+
+    .left h2 {
+        text-align: center;
+    }
+}
