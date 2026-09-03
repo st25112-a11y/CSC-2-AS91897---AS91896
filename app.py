@@ -224,6 +224,14 @@ def menu():
 
     return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides, cart=cart, open_item=open_item)
 
+def diet_filter(items, diet_type):
+    """Filters items based on their diet type."""
+    if diet_type in ['vegetarian', 'non-vegetarian']:
+        return [item for item in items if item.get('diet_type') == diet_type]
+    elif diet_type == 'all':
+        return items
+    return items
+
 @app.route('/contact')
 def contact():
     """Renders the Contact page."""

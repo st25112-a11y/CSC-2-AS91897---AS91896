@@ -1,25 +1,31 @@
 {
     "Spicy Chorizo Inferno": {
+        "diet_type": "non-vegetarian",
         "price": 30.99,
         "stock": 4
     },
     "Wagyu Beef Supreme": {
+        "diet_type": "non-vegetarian",
         "price": 38.99,
         "stock": 6
     },
     "Truffle Mushroom Delight": {
+        "diet_type": "vegetarian",
         "price": 28.99,
         "stock": 12
     },
     "Lobster & Garlic Butter": {
+        "diet_type": "non-vegetarian",
         "price": 35.99,
         "stock": 4
     },
     "Prosciutto & Arugula": {
+        "diet_type": "non-vegetarian",
         "price": 27.99,
         "stock": 7
     },
     "BBQ Pulled Pork": {
+        "diet_type": "non-vegetarian",
         "price": 29.99,
         "stock": 10
     }

@@ -6,6 +6,10 @@
     <h1>Our Menu</h1>
     <div class="container">
         <div class="left">
+            <div class="diet_buttons">
+                <button class="vegetarian">Vegetarian</button>
+                <button class="non-vegetarian">Non-Vegetarian</button>
+            </div>
             <h2>Classic Pizzas</h2>
             <div class="menu-grid">
                 {% for name, details in classic_pizzas.items() %}
@@ -59,7 +63,6 @@
         </div>
     </div>
 
-    <!-- Your exact modal code remains below -->
     <dialog id="myModal">
         <h2 id="modalTitle"></h2>
         <form method="POST" action="{{ url_for('cart') }}">
