@@ -221,15 +221,18 @@ def menu():
     cart = session.get('cart', [])
     classic_pizzas, gourmet_pizzas, sides = load_data()
     open_item = request.args.get('item')
+    all_menu_items = {**classic_pizzas, **gourmet_pizzas, **sides}
+    requested_diet = request.args.get('diet')
+    filtered_items = diet_filter(all_menu_items, requested_diet)
 
-    return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides, cart=cart, open_item=open_item)
+    return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides, cart=cart, open_item=open_item, items=filtered_items, current_filter=requested_diet)
 
 def diet_filter(items, diet_type):
-    """Filters items based on their diet type."""
+    """
+    Filters the provided items dictionary based on the specified diet type.
+    """
     if diet_type in ['vegetarian', 'non-vegetarian']:
-        return [item for item in items if item.get('diet_type') == diet_type]
-    elif diet_type == 'all':
-        return items
+        return {name: details for name, details in items.items() if details.get('diet_type') == diet_type}
     return items
 
 @app.route('/contact')
@@ -256,10 +259,66 @@ def order_history():
         ORDER BY orders.order_date DESC
     ''')
 
-    orders = c.fetchall()
+    rows = c.fetchall()
+    conn.close()
+
+    grouped_orders = {}
+    for row in rows:
+        order_id = row['id']
+
+        if order_id not in grouped_orders:
+            grouped_orders[order_id] = {
+                'id': order_id,
+                'invoice_number': f"INV_{row['customer_name'].replace(' ', '_')}",
+                'customer_name': row['customer_name'],
+                'total': row['total'],
+                'invoice_date': row['order_date'],
+                'items': {}
+            }
+
+        item_label = f"{row['size']} ({row['item_name']})"
+        grouped_orders[order_id]['items'][item_label] = {'quantity': row['quantity']}
+    orders = list(grouped_orders.values())
     conn.close()
 
     return render_template('order_history.html', orders=orders)
+
+@app.route('/cancel_saved_order/<int:order_id>', methods=['POST'])
+def cancel_saved_order(order_id):
+    """
+    Cancels a previously saved order. It looks up the order in the database,
+    restocks the items back into the JSON files, and then deletes the order
+    """
+    conn = sqlite3.connect('dream_pizza.db')
+    c = conn.cursor()
+
+    c.execute('SELECT item_name, quantity FROM order_items WHERE order_id = ?', (order_id,))
+    items_to_restock = c.fetchall()
+
+    classic_pizzas, gourmet_pizzas, sides = load_data()
+
+    for item_name, quantity in items_to_restock:
+        if item_name in classic_pizzas:
+            classic_pizzas[item_name]['stock'] += quantity
+        elif item_name in gourmet_pizzas:
+            gourmet_pizzas[item_name]['stock'] += quantity
+        elif item_name in sides:
+            sides[item_name]['stock'] += quantity
+
+    with open('data/classic_pizzas.json', 'w') as f:
+        json.dump(classic_pizzas, f, indent=4)
+    with open('data/gourmet_pizzas.json', 'w') as f:
+        json.dump(gourmet_pizzas, f, indent=4)
+    with open('data/sides.json', 'w') as f:
+        json.dump(sides, f, indent=4)
+
+    c.execute('DELETE FROM order_items WHERE order_id = ?', (order_id,))
+    c.execute('DELETE FROM orders WHERE id = ?', (order_id,))
+    conn.commit()
+    conn.close()
+
+    flash(f'Order {order_id} has been cancelled and stock has been updated.')
+    return redirect(url_for('order_history'))
 
 @app.route('/help')
 def help():
@@ -333,7 +392,7 @@ def cart():
                     if remaining_quantity > 0:
                         flash(f'You can only add {remaining_quantity} more pizzas to your cart')
                     else:
-                        flash('You have reached the maximum quantity of pizzasin your cart')
+                        flash('You have reached the maximum quantity of pizzas in your cart')
                     return redirect(url_for('menu'))
 
             elif item_type == 'side':

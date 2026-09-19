@@ -3,8 +3,51 @@
 {% block title %}Order History - Dream Pizzas{% endblock %}
 
 {% block content %}
-    <body>
-        <h2>shop name</h2>
-        <p>placeholder</p>
-    </body>
+    <div class="order-history-container">
+        <h2 class="order-history-title">Your Order History</h2>
+
+        {% if orders %}
+            <div class="table-responsive">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Customer</th>
+                            <th>Items Ordered</th>
+                            <th>Total</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td><strong>{{ order['invoice_number'] }}</strong></td>
+                                <td>{{ order['customer_name'] }}</td>
+                                <td>
+                                    <ul class="item-list">
+                                        {% for item, details in order['items'].items() %}
+                                            <li>{{ item }} <span class="qty-badge">(x{{ details['quantity'] }})</span></li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td class="price-tag">${{ '%.2f' % order['total'] }}</td>
+                                <td>{{ order['invoice_date'] }}</td>
+                                <td>
+                                    <form action="{{ url_for('cancel_saved_order', order_id=order['id']) }}" method="post" style="margin: 0;">
+                                        <button type="submit" class="cancel-btn" onclick="return confirm('Are you sure you want to cancel this order? This cannot be undone.')">Cancel Order</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="no-orders">
+                <h3>No orders found</h3>
+                <p>Looks like you haven't placed any orders yet. <a href="{{ url_for('menu') }}">Check out our menu!</a></p>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

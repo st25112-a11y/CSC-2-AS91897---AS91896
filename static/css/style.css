@@ -31,6 +31,7 @@ h1, h2, h3 {
     width: 100%;
     max-width: 600px;
     list-style: none;
+    text-decoration: underline solid #E63946;
 }
 
 .main-links ul li {
@@ -42,7 +43,7 @@ h1, h2, h3 {
 
 ul a {
     color: white;
-    text-decoration: none;
+    text-decoration: underline solid white;
     height: 100%;
     display: block;
     text-align: center;
@@ -58,6 +59,7 @@ ul a {
 .main-links ul a.active {
     background-color: white;
     color: #E63946;
+    text-decoration: underline solid #E63946;
     transition: 0.3s ease;
 }
 
@@ -298,6 +300,132 @@ footer {
 
 .menu-card .order-btn {
     margin-top: 15px;
+}
+
+/* Filter Buttons */
+.filter-btn {
+        padding: 8px 16px;
+        margin-right: 10px;
+        text-decoration: none;
+        background-color: #f1f1f1;
+        color: #333;
+        border-radius: 4px;
+}
+.filter-btn.active {
+    background-color: #c92a38;
+    color: white;
+    font-weight: bold;
+}
+
+/* Container & Layout */
+.order-history-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: Arial, sans-serif;
+}
+.order-history-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+/* Table Card Wrapper for Mobile Responsiveness */
+.table-responsive {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+}
+
+/* Table Styling */
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* Prevents squishing on mobile */
+}
+.order-table th, .order-table td {
+    padding: 1.2rem 1rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+}
+.order-table th {
+    background-color: #fafafa;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+.order-table tr:last-child td {
+    border-bottom: none;
+}
+.order-table tr:hover td {
+    background-color: #fdfdfd;
+}
+
+/* Pizza Items List */
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.item-list li {
+    padding: 4px 0;
+    font-size: 0.95rem;
+    color: #444;
+    border-bottom: 1px dashed #eee;
+}
+.item-list li:last-child {
+    border-bottom: none;
+}
+.qty-badge {
+    color: #888;
+    font-size: 0.85rem;
+}
+
+/* Price Tag */
+.price-tag {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+/* Cancel Button */
+.cancel-btn {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+.cancel-btn:hover {
+    background-color: #dc2626;
+}
+
+/* Empty State */
+.no-orders {
+    text-align: center;
+    color: #666;
+    padding: 4rem 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #eaeaea;
+}
+.no-orders a {
+    color: #ff5722; /* Adjust to match your theme */
+    text-decoration: none;
+    font-weight: bold;
+}
+.no-orders a:hover {
+    text-decoration: underline;
 }
 
 

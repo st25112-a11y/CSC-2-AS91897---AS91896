@@ -12,7 +12,7 @@
     "Veggie Pizza": {
         "diet_type": "vegetarian",
         "price": 16.99,
-        "stock": 40
+        "stock": 39
     },
     "Cheesey Garlic Pizza": {
         "diet_type": "vegetarian",
