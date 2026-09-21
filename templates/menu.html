@@ -6,15 +6,28 @@
     <h1>Our Menu</h1>
     <div class="container">
         <div class="left">
-            <div class="diet_buttons">
-                <button class="vegetarian">Vegetarian</button>
-                <button class="non-vegetarian">Non-Vegetarian</button>
+            <div class="filter-container">
+                <a href="{{ url_for('menu') }}" 
+                class="filter-btn {% if not current_filter %}active{% endif %}">
+                All Pizzas
+                </a>
+                
+                <a href="{{ url_for('menu', diet='vegetarian') }}" 
+                class="filter-btn {% if current_filter == 'vegetarian' %}active{% endif %}">
+                Vegetarian Only
+                </a>
+                
+                <a href="{{ url_for('menu', diet='non-vegetarian') }}" 
+                class="filter-btn {% if current_filter == 'non-vegetarian' %}active{% endif %}">
+                Meat Pizzas
+                </a>
             </div>
             <h2>Classic Pizzas</h2>
             <div class="menu-grid">
                 {% for name, details in classic_pizzas.items() %}
                 <div class="menu-card">
                     <h3>{{ name }}</h3>
+                    <img src="{{ url_for('static', filename='css/images/' + details.image) }}" alt="{{ name }}">
                     <p>Price: ${{ details.price }}</p>
                     <p>Stock: {{ details.stock }}</p>
                     <button class="order-btn" data-name="{{ name }}">Order</button>
@@ -27,6 +40,7 @@
                 {% for name, details in gourmet_pizzas.items() %}
                 <div class="menu-card">
                     <h3>{{ name }}</h3>
+                    <img src="{{ url_for('static', filename='css/images/' + details.image) }}" alt="{{ name }}">
                     <p>Price: ${{ details.price }}</p>
                     <p>Stock: {{ details.stock }}</p>
                     <button class="order-btn" data-name="{{ name }}">Order</button>
