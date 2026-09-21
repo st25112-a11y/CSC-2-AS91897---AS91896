@@ -270,6 +270,12 @@ footer {
 }
 
 /* Menu Grid */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

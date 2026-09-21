@@ -2,31 +2,37 @@
     "Peperoni Pizza": {
         "diet_type": "non-vegetarian",
         "price": 19.99,
-        "stock": 45
+        "stock": 45,
+        "image": "peperoni-pizza.png"
     },
     "Cheese Pizza": {
         "diet_type": "vegetarian",
         "price": 15.99,
-        "stock": 57
+        "stock": 57,
+        "image": "cheese-pizza.png"
     },
     "Veggie Pizza": {
         "diet_type": "vegetarian",
         "price": 16.99,
-        "stock": 39
+        "stock": 39,
+        "image": "vegetarian-pizza.png"
     },
     "Cheesey Garlic Pizza": {
         "diet_type": "vegetarian",
         "price": 16.99,
-        "stock": 54
+        "stock": 54,
+        "image": "cheesey-garlic-pizza.png"
     },
     "Beef & Onion Pizza": {
         "diet_type": "non-vegetarian",
         "price": 18.99,
-        "stock": 35
+        "stock": 35,
+        "image": "beef-onion-pizza.png"
     },
     "Hawaiian Pizza": {
         "diet_type": "non-vegetarian",
         "price": 18.99,
-        "stock": 24
+        "stock": 24,
+        "image": "hawaiian-pizza.png"
     }
 }
