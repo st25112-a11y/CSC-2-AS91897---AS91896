@@ -69,6 +69,15 @@ ul a {
     transition: 0.3s ease;
 }
 
+/* Popular Items on Home Page */
+.popular-item-image {
+    width: 100px;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+    border-radius: 8px;
+}
+
 /* Layout Containers */
 main {
     padding: 20px;
@@ -439,7 +448,6 @@ img {
 .no-orders a:hover {
     text-decoration: underline;
 }
-
 
 /* Responsive Design */
 

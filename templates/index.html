@@ -21,6 +21,7 @@
         <ul>
         {% for item in popular_pizzas %}
             <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
+            <img src="{{ url_for('static', filename='css/images/' + item.image) }}" alt="{{ item.name }}" class="popular-item-image">
             <p>Ordered {{ item.total_ordered }} times</p>
             <a href="{{ url_for('menu', item=item.name) }}" class="home-order-btn">Order</a>
         {% endfor %}
@@ -29,6 +30,7 @@
         <ul>
         {% for item in popular_gourmet_pizzas %}
             <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
+            <img src="{{ url_for('static', filename='css/images/' + item.image) }}" alt="{{ item.name }}" class="popular-item-image">
             <p>Ordered {{ item.total_ordered }} times</p>
             <a href="{{ url_for('menu', item=item.name) }}" class="home-order-btn">Order</a>
         {% endfor %}
@@ -37,6 +39,7 @@
         <ul>
         {% for item in popular_sides %}
             <li>{{ item.name }} - ${{ "%.2f"|format(item.price) }}</li>
+            <img src="{{ url_for('static', filename='css/images/' + item.image) }}" alt="{{ item.name }}" class="popular-item-image">
             <p>Ordered {{ item.total_ordered }} times</p>
             <a href="{{ url_for('menu', item=item.name) }}" class="home-order-btn">Order</a>
         {% endfor %}
