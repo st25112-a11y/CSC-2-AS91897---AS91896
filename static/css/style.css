@@ -13,6 +13,12 @@ h1, h2, h3 {
 }
 
 /* Header & Navigation */
+.main-links img {
+    height: 60px;
+    margin-right: 20px;
+    justify-self: start;
+}
+
 .main-links {
     background-color: #1A1A1A;
     display: flex;
