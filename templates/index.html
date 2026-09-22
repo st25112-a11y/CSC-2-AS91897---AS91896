@@ -3,6 +3,11 @@
 {% block title %}Home - Dream Pizzas{% endblock %}
 
 {% block content %}
+    <nav>
+        <h2>Welcome to Dream Pizzas!</h2>
+        <p>Discover our delicious range of pizzas and sides. Order online for delivery or pickup.</p>
+        <a href="{{ url_for('menu') }}" class="home-order-btn">Order Now</a>
+    </nav>
     <div class="featured-deal">
         <h3>Featured Deals</h3>
         <p>{{ feature_pizza_size }} {{ feature_deal }} with {{ feature_side_size }} {{ feature_deal_side }} - Only ${{ "%.2f"|format(feature_deal_price) }}!</p>
