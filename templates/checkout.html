@@ -4,7 +4,7 @@
 {% block content %}
     <h1>Checkout</h1>
     
-    <table>
+    <table><!-- Table displaying items in the cart -->
         <thead>
             <tr>
                 <th>Item</th>
@@ -15,7 +15,7 @@
         </thead>
         <tbody>
             {% for item in cart %}
-                <tr>
+                <tr><!-- Cart item row -->
                     <td>{{ item.item }}</td>
                     <td>{{ item.size }}</td>
                     <td>{{ item.quantity }}</td>
@@ -27,7 +27,7 @@
 
     <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>
 
-    <form method="POST" action="{{ url_for('checkout') }}">
+    <form method="POST" action="{{ url_for('checkout') }}"><!-- Checkout form for user details -->
         
         <label for="del_or_pickup">Delivery or Pickup:</label>
         <select name="del_or_pickup" required>

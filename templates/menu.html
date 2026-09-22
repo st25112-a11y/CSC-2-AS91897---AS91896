@@ -6,7 +6,7 @@
     <h1>Our Menu</h1>
     <div class="container">
         <div class="left">
-            <div class="filter-container">
+            <div class="filter-container"><!-- Dietary filter buttons -->
                 <a href="{{ url_for('menu') }}" 
                 class="filter-btn {% if not current_filter %}active{% endif %}">
                 All Pizzas
@@ -22,7 +22,7 @@
                 Meat Pizzas
                 </a>
             </div>
-            <h2>Classic Pizzas</h2>
+            <h2>Classic Pizzas</h2><!-- Classic pizza cards -->
             <div class="menu-grid">
                 {% for name, details in classic_pizzas.items() %}
                 <div class="menu-card">
@@ -35,7 +35,7 @@
                 {% endfor %}
             </div>
 
-            <h2>Gourmet Pizzas</h2>
+            <h2>Gourmet Pizzas</h2><!-- Gourmet pizza cards -->
             <div class="menu-grid">
                 {% for name, details in gourmet_pizzas.items() %}
                 <div class="menu-card">
@@ -48,7 +48,7 @@
                 {% endfor %}
             </div>
 
-            <h2>Sides</h2>
+            <h2>Sides</h2><!-- Side dish cards -->
             <div class="menu-grid">
                 {% for name, details in sides.items() %}
                 <div class="menu-card">
@@ -62,7 +62,7 @@
             </div>
         </div>
 
-        <div class="right">
+        <div class="right"><!-- Cart -->
             <h2>Your Order</h2>
             <ul id="cartItems">
                 {% for item in cart %}
@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    <dialog id="myModal">
+    <dialog id="myModal"><!-- Modal for added modifiers for ordering items -->
         <h2 id="modalTitle"></h2>
         <form method="POST" action="{{ url_for('cart') }}">
             <input type="hidden" id="modalItemName" name="item" required>
