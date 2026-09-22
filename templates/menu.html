@@ -53,6 +53,7 @@
                 {% for name, details in sides.items() %}
                 <div class="menu-card">
                     <h3>{{ name }}</h3>
+                    <img src="{{ url_for('static', filename='css/images/' + details.image) }}" alt="{{ name }}">
                     <p>Price: ${{ details.price }}</p>
                     <p>Stock: {{ details.stock }}</p>
                     <button class="order-btn" data-name="{{ name }}">Order</button>

@@ -2,36 +2,43 @@
     "Garlic Bread": {
         "diet_type": "vegetarian",
         "price": 6.5,
-        "stock": 25
+        "stock": 25,
+        "image": "garlic-bread.png"
     },
     "Cheesy Garlic Bread": {
         "diet_type": "vegetarian",
         "price": 8.5,
-        "stock": 19
+        "stock": 19,
+        "image": "cheesy-garlic.png"
     },
     "Mozzarella Sticks": {
         "diet_type": "vegetarian",
         "price": 9.9,
-        "stock": 16
+        "stock": 16,
+        "image": "mozzarella-stick.png"
     },
     "Buffalo Wings": {
         "diet_type": "non-vegetarian",
         "price": 12.9,
-        "stock": 15
+        "stock": 15,
+        "image": "buffalo-wings.png"
     },
     "BBQ Chicken Wings": {
         "diet_type": "non-vegetarian",
         "price": 12.9,
-        "stock": 13
+        "stock": 13,
+        "image": "chicken-wings.png"
     },
     "Loaded Potato Wedges": {
-        "diet_type": "vegetarian",
+        "diet_type": "non-vegetarian",
         "price": 10.5,
-        "stock": 16
+        "stock": 16,
+        "image": "loaded-fries.png"
     },
     "Onion Rings": {
         "diet_type": "vegetarian",
         "price": 7.9,
-        "stock": 21
+        "stock": 21,
+        "image": "onion-rings.png"
     }
 }
