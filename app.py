@@ -221,18 +221,23 @@ def menu():
     cart = session.get('cart', [])
     classic_pizzas, gourmet_pizzas, sides = load_data()
     open_item = request.args.get('item')
-    all_menu_items = {**classic_pizzas, **gourmet_pizzas, **sides}
     requested_diet = request.args.get('diet')
-    filtered_items = diet_filter(all_menu_items, requested_diet)
 
-    return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides, cart=cart, open_item=open_item, items=filtered_items, current_filter=requested_diet)
+    filtered_classic = diet_filter(classic_pizzas, requested_diet)
+    filtered_gourmet = diet_filter(gourmet_pizzas, requested_diet)
+    filtered_sides = diet_filter(sides, requested_diet)
+
+    return render_template('menu.html', active_page='menu', classic_pizzas=filtered_classic, gourmet_pizzas=filtered_gourmet, sides=filtered_sides, cart=cart, open_item=open_item, current_filter=requested_diet)
 
 def diet_filter(items, diet_type):
     """
     Filters the provided items dictionary based on the specified diet type.
     """
     if diet_type in ['vegetarian', 'non-vegetarian']:
-        return {name: details for name, details in items.items() if details.get('diet_type') == diet_type}
+        return {
+            name: details for name, details in items.items() 
+            if str(details.get('diet_type', '')).lower() == diet_type.lower()
+        }
     return items
 
 @app.route('/contact')
