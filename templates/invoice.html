@@ -3,13 +3,13 @@
 {% block title %}Invoice - Dream Pizzas{% endblock %}
 
 {% block content %}
-    <h1>Invoice</h1>
+    <h1>Invoice</h1><!-- Invoice details -->
     <p>Invoice ID: {{ invoice_number }}<br>
     Customer Name: {{ name }}<br>
     Invoice Date: {{ invoice_date }}</p>
     <table>
         <thead>
-            <tr>
+            <tr><!-- Table header row -->
                 <th>Item</th>
                 <th>Size</th>
                 <th>Quantity</th>
@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for item in cart %}
+            {% for item in cart %}<!-- Displays item details -->
                 <tr>
                     <td>{{ item.item }}</td>
                     <td>{{ item.size }}</td>
@@ -27,5 +27,5 @@
             {% endfor %}
         </tbody>
     </table>
-    <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>
+    <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p><!-- Total Price-->
 {% endblock %}

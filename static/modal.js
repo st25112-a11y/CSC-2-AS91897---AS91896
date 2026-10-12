@@ -1,7 +1,8 @@
+// Modal functionality 
 const modal = document.getElementById('myModal');
 const modalTitle = document.getElementById('modalTitle');
 const modalItemName = document.getElementById('modalItemName');
-
+// Function to open the modal with the selected item name
 function openModal(itemName) {
     modalTitle.textContent = `${itemName}`;
     modalItemName.value = itemName;
@@ -18,6 +19,8 @@ function closeModal() {
     modal.close();
 }
 
+// Delivery/Pickup toggle functionality
+// Get the select element and the address field container
 const deliverySelect = document.getElementById("del_or_pickup");
 const addressContainer = document.getElementById("addressField");
 
@@ -29,8 +32,9 @@ function toggleAddress() {
     }
 }
 
+// Countdown timer functionality
 let countdownInterval;
-
+// Calculates time remaining
 function startTimer(expiresAt) {
     clearInterval(countdownInterval);
     const timerDisplay = document.getElementById('deal-timer');
@@ -38,7 +42,6 @@ function startTimer(expiresAt) {
     countdownInterval = setInterval(() => {
         const now = Math.floor(Date.now() / 1000);
         const secondsRemaining = expiresAt - now;
-
         if (secondsRemaining > 0) {
             timerDisplay.textContent = `(Ends in ${secondsRemaining}s)`;
         } else {
@@ -48,7 +51,7 @@ function startTimer(expiresAt) {
         }
     }, 1000);
 }
-
+// Updates the timer display and fetches a new deal when the timer reaches zero
 async function fetchNewDeal() {
     try {
         const response = await fetch('/api/get_deal');

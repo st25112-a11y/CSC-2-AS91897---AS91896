@@ -11,7 +11,7 @@
                 <table class="order-table">
                     <thead>
                         <tr>
-                            <th>Invoice</th>
+                            <th>Invoice</th><!-- Invoice column header -->
                             <th>Customer</th>
                             <th>Items Ordered</th>
                             <th>Total</th>
@@ -20,7 +20,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in orders %}
+                        {% for order in orders %}<!-- Loop through each order and display its details -->
                             <tr>
                                 <td><strong>{{ order['invoice_number'] }}</strong></td>
                                 <td>{{ order['customer_name'] }}</td>
