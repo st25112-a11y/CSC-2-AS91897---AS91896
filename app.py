@@ -1,13 +1,14 @@
 import datetime
 import json
-import sqlite3
 import random
+import sqlite3
 import time
 
-from flask import Flask, jsonify, render_template, request, session, flash, redirect, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 
 app = Flask(__name__)
 app.secret_key = 'key'
+
 
 def load_data():
     """
@@ -26,7 +27,8 @@ def load_data():
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error loading data: {e}")
         return {}, {}, {}
-    
+
+
 def init_db():
     """
     Initializes the SQLite database. It creates two tables if they don't already exist:
@@ -59,6 +61,7 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 init_db()
 
 active_deal = {
@@ -69,6 +72,7 @@ active_deal = {
     "price": 0,
     "expires_at": 0
 }
+
 
 def get_or_create_deal():
     """
@@ -97,6 +101,7 @@ def get_or_create_deal():
         
     return active_deal
 
+
 @app.route('/api/get_deal')
 def api_get_deal():
     """
@@ -104,6 +109,7 @@ def api_get_deal():
     Used by the frontend JavaScript to update the deal without refreshing the page.
     """
     return jsonify(get_or_create_deal())
+
 
 @app.route('/')
 def index():
@@ -116,7 +122,8 @@ def index():
     current_deal = get_or_create_deal()
     popular_pizzas, popular_gourmet_pizzas, popular_sides = get_popular_items()
 
-    return render_template('index.html', 
+    return render_template(
+        'index.html', 
         active_page='index', 
         feature_deal=current_deal["pizza"], 
         feature_deal_price=current_deal["price"], 
@@ -127,7 +134,9 @@ def index():
         cart=cart, 
         popular_pizzas=popular_pizzas, 
         popular_gourmet_pizzas=popular_gourmet_pizzas, 
-        popular_sides=popular_sides)
+        popular_sides=popular_sides
+    )
+
 
 @app.route('/add_featured_deal', methods=['POST'])
 def add_featured_deal():
@@ -171,6 +180,7 @@ def add_featured_deal():
     flash('Featured deal added directly to your cart!')
     return redirect(url_for('menu'))
 
+
 def get_popular_items(limit=3):
     """
     Queries the database to find the items that have been ordered the most times.
@@ -207,10 +217,12 @@ def get_popular_items(limit=3):
 
     return popular_pizzas, popular_gourmet_pizzas, popular_sides
 
+
 @app.route('/about')
 def about():
     """Renders the About Us page."""
     return render_template('about.html', active_page='about')
+
 
 @app.route('/menu')
 def menu():
@@ -227,14 +239,17 @@ def menu():
     filtered_gourmet = diet_filter(gourmet_pizzas, requested_diet)
     filtered_sides = diet_filter(sides, requested_diet)
 
-    return render_template('menu.html',
-                           active_page='menu',
-                           classic_pizzas=filtered_classic,
-                           gourmet_pizzas=filtered_gourmet,
-                           sides=filtered_sides,
-                           cart=cart,
-                           open_item=open_item,
-                           current_filter=requested_diet)
+    return render_template(
+        'menu.html',
+        active_page='menu',
+        classic_pizzas=filtered_classic,
+        gourmet_pizzas=filtered_gourmet,
+        sides=filtered_sides,
+        cart=cart,
+        open_item=open_item,
+        current_filter=requested_diet
+    )
+
 
 def diet_filter(items, diet_type):
     """
@@ -247,10 +262,12 @@ def diet_filter(items, diet_type):
         }
     return items
 
+
 @app.route('/contact')
 def contact():
     """Renders the Contact page."""
     return render_template('contact.html')
+
 
 @app.route('/order_history')
 def order_history():
@@ -290,16 +307,17 @@ def order_history():
 
         item_label = f"{row['size']} ({row['item_name']})"
         grouped_orders[order_id]['items'][item_label] = {'quantity': row['quantity']}
+        
     orders = list(grouped_orders.values())
-    conn.close()
 
     return render_template('order_history.html', orders=orders)
+
 
 @app.route('/cancel_saved_order/<int:order_id>', methods=['POST'])
 def cancel_saved_order(order_id):
     """
     Cancels a previously saved order. It looks up the order in the database,
-    restocks the items back into the JSON files, and then deletes the order
+    restocks the items back into the JSON files, and then deletes the order.
     """
     conn = sqlite3.connect('dream_pizza.db')
     c = conn.cursor()
@@ -332,10 +350,12 @@ def cancel_saved_order(order_id):
     flash(f'Order {order_id} has been cancelled and stock has been updated.')
     return redirect(url_for('order_history'))
 
+
 @app.route('/help')
 def help():
     """Renders the Help/FAQ page."""
     return render_template('help.html')
+
 
 @app.route('/invoice')
 def invoice():
@@ -355,13 +375,17 @@ def invoice():
     
     invoice_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     invoice_number = f"INV_{customer_name.replace(' ', '_')}"
-    invoice_filename = f"{invoice_number}.txt"
     total = total_price(cart)
-    return render_template('invoice.html',
-                           invoice_number=invoice_number,
-                           name=customer_name,
-                           invoice_date=invoice_date,
-                           cart=cart, total=total)
+    
+    return render_template(
+        'invoice.html',
+        invoice_number=invoice_number,
+        name=customer_name,
+        invoice_date=invoice_date,
+        cart=cart, 
+        total=total
+    )
+
 
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -423,8 +447,8 @@ def cart():
             item_found = False
             for existing_item in cart:
                 if (existing_item['item'] == item
-                    and existing_item['size'] == size
-                    and existing_item['instructions'] == instructions):
+                        and existing_item['size'] == size
+                        and existing_item['instructions'] == instructions):
 
                     existing_item['quantity'] += quantity
                     item_found = True
@@ -438,12 +462,14 @@ def cart():
                     'instructions': instructions,
                     'price': unit_price
                 }
-
                 cart.append(cart_item)
+
             session['cart'] = cart
             flash(f'Added {quantity}x {size} {item} to your cart')
             return redirect(url_for('menu'))
+            
     return redirect(url_for('menu'))
+
 
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
@@ -458,6 +484,7 @@ def remove_from_cart():
     session['cart'] = cart
     flash(f'Removed {size} {item} from your cart')
     return redirect(url_for('menu'))
+
 
 def total_price(cart):
     """
@@ -479,6 +506,7 @@ def total_price(cart):
             price = 0
         total += price * item['quantity']
     return total
+
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
@@ -550,18 +578,21 @@ def checkout():
             json.dump(sides, f, indent=4)
 
         session['last_order'] = {
-        'cart': cart,
-        'name': customer_name
+            'cart': cart,
+            'name': customer_name
         }
 
         session.pop('cart', None)
         flash('Order has been placed')
         return redirect(url_for('invoice'))
 
-    return render_template('checkout.html',
-                           active_page='checkout',
-                           cart=cart,
-                           total=total_price(cart))
+    return render_template(
+        'checkout.html',
+        active_page='checkout',
+        cart=cart,
+        total=total_price(cart)
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
