@@ -10,6 +10,11 @@ app = Flask(__name__)
 app.secret_key = 'key'
 
 def load_data():
+    """
+    Reads the menu items from JSON files (classic pizzas, gourmet pizzas, and sides).
+    Returns them as three separate dictionaries. If a file is missing or corrupted, 
+    it catches the error and returns empty dictionaries to prevent the app from crashing.
+    """
     try:
         with open('data/classic_pizzas.json') as f:
             classic_pizzas = json.load(f)
@@ -23,6 +28,11 @@ def load_data():
         return {}, {}, {}
     
 def init_db():
+    """
+    Initializes the SQLite database. It creates two tables if they don't already exist:
+    1. 'orders': Stores overall customer order info (name, address, total price).
+    2. 'order_items': Stores the individual pizzas/sides belonging to a specific order.
+    """
     conn = sqlite3.connect('dream_pizza.db')
     c = conn.cursor()
     c.execute('''
@@ -61,10 +71,15 @@ active_deal = {
 }
 
 def get_or_create_deal():
+    """
+    Checks if the current featured deal timer has expired. 
+    If it has, it randomly selects a new pizza and side from the JSON data, 
+    calculates a discounted price (20% off the side), and resets the 60-second timer.
+    Returns the active deal dictionary.
+    """
     global active_deal
     current_time = int(time.time())
     
-    # If the current time has passed the expiration, make a new deal
     if current_time > active_deal["expires_at"]:
         classic_pizzas, gourmet_pizzas, sides = load_data()
         all_pizzas = {**classic_pizzas, **gourmet_pizzas}
@@ -84,10 +99,19 @@ def get_or_create_deal():
 
 @app.route('/api/get_deal')
 def api_get_deal():
+    """
+    An API endpoint that returns the current featured deal as JSON data.
+    Used by the frontend JavaScript to update the deal without refreshing the page.
+    """
     return jsonify(get_or_create_deal())
 
 @app.route('/')
 def index():
+    """
+    Renders the homepage. It fetches the user's cart, gets the current active 
+    featured deal, calculates the most popular items to display, and passes 
+    all this data to 'index.html'.
+    """
     cart = session.get('cart', [])
     current_deal = get_or_create_deal()
     popular_pizzas, popular_gourmet_pizzas, popular_sides = get_popular_items()
@@ -107,6 +131,11 @@ def index():
 
 @app.route('/add_featured_deal', methods=['POST'])
 def add_featured_deal():
+    """
+    Reads the hidden form fields from the Featured Deal section and adds 
+    both the pizza and the side to the user's session cart. It tags them with 
+    'is_deal': True so the checkout system knows to apply the discount.
+    """
     pizza = request.form.get('pizza')
     pizza_size = request.form.get('pizza_size')
     side = request.form.get('side')
@@ -143,6 +172,11 @@ def add_featured_deal():
     return redirect(url_for('menu'))
 
 def get_popular_items(limit=3):
+    """
+    Queries the database to find the items that have been ordered the most times.
+    It groups order quantities by item name, sorts them highest to lowest, 
+    and returns the top 3 (by default) items for each category (classic, gourmet, sides).
+    """
     conn = sqlite3.connect('dream_pizza.db')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -175,22 +209,56 @@ def get_popular_items(limit=3):
 
 @app.route('/about')
 def about():
+    """Renders the About Us page."""
     return render_template('about.html', active_page='about')
 
 @app.route('/menu')
 def menu():
+    """
+    Renders the main Menu page. Loads all food items from JSON 
+    and passes them to the template to be displayed.
+    """
     cart = session.get('cart', [])
     classic_pizzas, gourmet_pizzas, sides = load_data()
     open_item = request.args.get('item')
+    requested_diet = request.args.get('diet')
 
-    return render_template('menu.html', active_page='menu', classic_pizzas=classic_pizzas, gourmet_pizzas=gourmet_pizzas, sides=sides, cart=cart, open_item=open_item)
+    filtered_classic = diet_filter(classic_pizzas, requested_diet)
+    filtered_gourmet = diet_filter(gourmet_pizzas, requested_diet)
+    filtered_sides = diet_filter(sides, requested_diet)
+
+    return render_template('menu.html',
+                           active_page='menu',
+                           classic_pizzas=filtered_classic,
+                           gourmet_pizzas=filtered_gourmet,
+                           sides=filtered_sides,
+                           cart=cart,
+                           open_item=open_item,
+                           current_filter=requested_diet)
+
+def diet_filter(items, diet_type):
+    """
+    Filters the provided items dictionary based on the specified diet type.
+    """
+    if diet_type in ['vegetarian', 'non-vegetarian']:
+        return {
+            name: details for name, details in items.items() 
+            if str(details.get('diet_type', '')).lower() == diet_type.lower()
+        }
+    return items
 
 @app.route('/contact')
 def contact():
+    """Renders the Contact page."""
     return render_template('contact.html')
 
 @app.route('/order_history')
 def order_history():
+    """
+    Fetches every past order from the SQLite database, joining the 
+    'orders' table with the 'order_items' table so it can display 
+    the customer info alongside what they actually ordered.
+    """
     conn = sqlite3.connect('dream_pizza.db')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -203,18 +271,79 @@ def order_history():
         ORDER BY orders.order_date DESC
     ''')
 
-    orders = c.fetchall()
+    rows = c.fetchall()
+    conn.close()
+
+    grouped_orders = {}
+    for row in rows:
+        order_id = row['id']
+
+        if order_id not in grouped_orders:
+            grouped_orders[order_id] = {
+                'id': order_id,
+                'invoice_number': f"INV_{row['customer_name'].replace(' ', '_')}",
+                'customer_name': row['customer_name'],
+                'total': row['total'],
+                'invoice_date': row['order_date'],
+                'items': {}
+            }
+
+        item_label = f"{row['size']} ({row['item_name']})"
+        grouped_orders[order_id]['items'][item_label] = {'quantity': row['quantity']}
+    orders = list(grouped_orders.values())
     conn.close()
 
     return render_template('order_history.html', orders=orders)
 
+@app.route('/cancel_saved_order/<int:order_id>', methods=['POST'])
+def cancel_saved_order(order_id):
+    """
+    Cancels a previously saved order. It looks up the order in the database,
+    restocks the items back into the JSON files, and then deletes the order
+    """
+    conn = sqlite3.connect('dream_pizza.db')
+    c = conn.cursor()
+
+    c.execute('SELECT item_name, quantity FROM order_items WHERE order_id = ?', (order_id,))
+    items_to_restock = c.fetchall()
+
+    classic_pizzas, gourmet_pizzas, sides = load_data()
+
+    for item_name, quantity in items_to_restock:
+        if item_name in classic_pizzas:
+            classic_pizzas[item_name]['stock'] += quantity
+        elif item_name in gourmet_pizzas:
+            gourmet_pizzas[item_name]['stock'] += quantity
+        elif item_name in sides:
+            sides[item_name]['stock'] += quantity
+
+    with open('data/classic_pizzas.json', 'w') as f:
+        json.dump(classic_pizzas, f, indent=4)
+    with open('data/gourmet_pizzas.json', 'w') as f:
+        json.dump(gourmet_pizzas, f, indent=4)
+    with open('data/sides.json', 'w') as f:
+        json.dump(sides, f, indent=4)
+
+    c.execute('DELETE FROM order_items WHERE order_id = ?', (order_id,))
+    c.execute('DELETE FROM orders WHERE id = ?', (order_id,))
+    conn.commit()
+    conn.close()
+
+    flash(f'Order {order_id} has been cancelled and stock has been updated.')
+    return redirect(url_for('order_history'))
+
 @app.route('/help')
 def help():
+    """Renders the Help/FAQ page."""
     return render_template('help.html')
 
 @app.route('/invoice')
 def invoice():
-
+    """
+    Generates a final receipt. It looks up the 'last_order' stored in the 
+    user's session after they checkout, calculates the totals, and formats 
+    an invoice number before rendering the invoice page.
+    """
     last_order = session.get('last_order', {})
 
     if not last_order:
@@ -228,11 +357,20 @@ def invoice():
     invoice_number = f"INV_{customer_name.replace(' ', '_')}"
     invoice_filename = f"{invoice_number}.txt"
     total = total_price(cart)
-    return render_template('invoice.html', invoice_number=invoice_number, name=customer_name, invoice_date=invoice_date, cart=cart, total=total)
+    return render_template('invoice.html',
+                           invoice_number=invoice_number,
+                           name=customer_name,
+                           invoice_date=invoice_date,
+                           cart=cart, total=total)
 
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
-
+    """
+    Handles adding standard items to the cart. It enforces rules like a 
+    maximum limit of 5 pizzas and 5 sides per order. If the user adds an item 
+    that is already in the cart (same size and instructions), it simply 
+    updates the quantity rather than creating a duplicate entry.
+    """
     if request.method == 'POST':
         item = request.form.get('item')
         size = request.form.get('size')
@@ -258,7 +396,6 @@ def cart():
             current_pizza_qty = 0
             current_sides_qty = 0
 
-
             for i in cart:
                 if i['item'] in classic_pizzas or i['item'] in gourmet_pizzas:
                     current_pizza_qty += i['quantity']
@@ -271,7 +408,7 @@ def cart():
                     if remaining_quantity > 0:
                         flash(f'You can only add {remaining_quantity} more pizzas to your cart')
                     else:
-                        flash('You have reached the maximum quantity of pizzasin your cart')
+                        flash('You have reached the maximum quantity of pizzas in your cart')
                     return redirect(url_for('menu'))
 
             elif item_type == 'side':
@@ -310,6 +447,10 @@ def cart():
 
 @app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
+    """
+    Filters the user's current session cart to remove any item that matches 
+    the exact name and size requested. It then saves the updated cart back to the session.
+    """
     item = request.form.get('item')
     size = request.form.get('size')
     cart = session.get('cart', [])
@@ -319,6 +460,10 @@ def remove_from_cart():
     return redirect(url_for('menu'))
 
 def total_price(cart):
+    """
+    Loops through all items currently in the cart and calculates the total cost. 
+    It checks if the item is tagged as a deal ('is_deal') to apply the 20% discount.
+    """
     classic_pizzas, gourmet_pizzas, sides = load_data()
     total = 0
     for item in cart:
@@ -337,6 +482,14 @@ def total_price(cart):
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
+    """
+    Handles the final step of placing an order. 
+    1. Saves customer details to the database ('orders' table).
+    2. Saves individual ordered items to the database ('order_items' table).
+    3. Subtracts the ordered quantities from the stock numbers in the JSON files.
+    4. Saves the order details into 'last_order' for the invoice.
+    5. Clears the user's active cart.
+    """
     cart = session.get('cart', [])
 
     if not cart:
@@ -405,7 +558,10 @@ def checkout():
         flash('Order has been placed')
         return redirect(url_for('invoice'))
 
-    return render_template('checkout.html', active_page='checkout', cart=cart, total=total_price(cart))
+    return render_template('checkout.html',
+                           active_page='checkout',
+                           cart=cart,
+                           total=total_price(cart))
 
 if __name__ == '__main__':
     app.run(debug=True)

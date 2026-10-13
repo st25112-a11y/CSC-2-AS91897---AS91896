@@ -227,7 +227,14 @@ def menu():
     filtered_gourmet = diet_filter(gourmet_pizzas, requested_diet)
     filtered_sides = diet_filter(sides, requested_diet)
 
-    return render_template('menu.html', active_page='menu', classic_pizzas=filtered_classic, gourmet_pizzas=filtered_gourmet, sides=filtered_sides, cart=cart, open_item=open_item, current_filter=requested_diet)
+    return render_template('menu.html',
+                           active_page='menu',
+                           classic_pizzas=filtered_classic,
+                           gourmet_pizzas=filtered_gourmet,
+                           sides=filtered_sides,
+                           cart=cart,
+                           open_item=open_item,
+                           current_filter=requested_diet)
 
 def diet_filter(items, diet_type):
     """
@@ -350,7 +357,11 @@ def invoice():
     invoice_number = f"INV_{customer_name.replace(' ', '_')}"
     invoice_filename = f"{invoice_number}.txt"
     total = total_price(cart)
-    return render_template('invoice.html', invoice_number=invoice_number, name=customer_name, invoice_date=invoice_date, cart=cart, total=total)
+    return render_template('invoice.html',
+                           invoice_number=invoice_number,
+                           name=customer_name,
+                           invoice_date=invoice_date,
+                           cart=cart, total=total)
 
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -547,7 +558,10 @@ def checkout():
         flash('Order has been placed')
         return redirect(url_for('invoice'))
 
-    return render_template('checkout.html', active_page='checkout', cart=cart, total=total_price(cart))
+    return render_template('checkout.html',
+                           active_page='checkout',
+                           cart=cart,
+                           total=total_price(cart))
 
 if __name__ == '__main__':
     app.run(debug=True)
