@@ -1,10 +1,19 @@
 import datetime
 import json
-import sqlite3
 import random
+import sqlite3
 import time
 
-from flask import Flask, jsonify, render_template, request, session, flash, redirect, url_for
+from flask import (
+    Flask,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 
 app = Flask(__name__)
 app.secret_key = 'key'
@@ -529,18 +538,15 @@ def checkout():
 
             if item_name in classic_pizzas:
                 classic_pizzas[item_name]['stock'] -= qty_ordered
-                if classic_pizzas[item_name]['stock'] < 0:
-                    classic_pizzas[item_name]['stock'] = 0
+                classic_pizzas[item_name]['stock'] = max(classic_pizzas[item_name]['stock'], 0)
 
             elif item_name in gourmet_pizzas:
                 gourmet_pizzas[item_name]['stock'] -= qty_ordered
-                if gourmet_pizzas[item_name]['stock'] < 0:
-                    gourmet_pizzas[item_name]['stock'] = 0
+                gourmet_pizzas[item_name]['stock'] = max(gourmet_pizzas[item_name]['stock'], 0)
 
             elif item_name in sides:
                 sides[item_name]['stock'] -= qty_ordered
-                if sides[item_name]['stock'] < 0:
-                    sides[item_name]['stock'] = 0
+                sides[item_name]['stock'] = max(sides[item_name]['stock'], 0)
 
         with open('data/classic_pizzas.json', 'w') as f:
             json.dump(classic_pizzas, f, indent=4)
